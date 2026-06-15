@@ -7,18 +7,6 @@ import plotly.express as px
 import streamlit as st
 
 # =========================================================
-# CONFIG
-# =========================================================
-st.set_page_config(
-    page_title="Cockpit Papel",
-    layout="wide"
-)
-
-EXCEL_FILE = "Cockpit_Papel.xlsm"          # ajuste apenas se o nome do arquivo estiver diferente
-SOURCE_SHEET = "Preços e Condições"        # ajuste apenas se o nome da aba estiver diferente
-APP_TITLE = "Cockpit Papel"
-
-# =========================================================
 # CSS / LAYOUT
 # =========================================================
 st.markdown("""
@@ -99,6 +87,19 @@ st.markdown(
     f"<div class='custom-title'>{APP_TITLE}</div>",
     unsafe_allow_html=True
 )
+
+# =========================================================
+# CONFIG
+# =========================================================
+st.set_page_config(
+    page_title="Cockpit Papel",
+    layout="wide"
+)
+
+EXCEL_FILE = "Cockpit_Papel.xlsm"          # ajuste apenas se o nome do arquivo estiver diferente
+SOURCE_SHEET = "Preços e Condições"        # ajuste apenas se o nome da aba estiver diferente
+APP_TITLE = "Cockpit Papel"
+
 # =========================================================
 # HELPERS
 # =========================================================
