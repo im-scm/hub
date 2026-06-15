@@ -14,6 +14,7 @@ st.set_page_config(
 EXCEL_FILE = "Cockpit_Papel.xlsm"          # ajuste apenas se o nome do arquivo estiver diferente
 SOURCE_SHEET = "Preços e Condições"        # ajuste apenas se o nome da aba estiver diferente
 APP_TITLE = "Cockpit Papel"
+PREMISSAS_SHEET = "Premissas"
 
 # =========================================================
 # CSS / LAYOUT
@@ -420,13 +421,34 @@ def kpi_card(label, value):
         unsafe_allow_html=True
     )
 
-
 def to_excel_bytes(df_export):
     output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df_export.to_excel(writer, index=False, sheet_name="Cockpit Filtrado")
     output.seek(0)
     return output.getvalue()
+
+def load_premissas():
+    premissas = pd.read_excel(
+        EXCEL_FILE,
+        sheet_name=PREMISSAS_SHEET,
+        header=None
+    )
+
+    def get_cell(row_idx, col_idx):
+        try:
+            value = premissas.iat[row_idx, col_idx]
+            return None if pd.isna(value) else value
+        except Exception:
+            return None
+
+    return {
+        "Frete CN": get_cell(5, 2),   # C6
+        "Frete EU": get_cell(4, 2),   # C5
+        "USD/BRL": get_cell(23, 2),   # C24
+        "EUR/BRL": get_cell(24, 2),   # C25
+        "CNY/BRL": get_cell(25, 2),   # C26
+    }
 
 # =========================================================
 # LOAD
@@ -453,6 +475,13 @@ try:
     df = load_data()
 except Exception as e:
     st.error("❌ Falha ao ler e estruturar a base de dados.")
+    st.code(str(e))
+    st.stop()
+
+try:
+    premissas_kpis = load_premissas()
+except Exception as e:
+    st.error("❌ Falha ao ler a aba de Premissas.")
     st.code(str(e))
     st.stop()
 
@@ -519,6 +548,40 @@ with k3:
 
 with k4:
     kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+k5, k6, k7, k8, k9 = st.columns(5)
+
+with k5:
+    kpi_card(
+        "Frete CN",
+        format_br_number(premissas_kpis["Frete CN"], 2) if premissas_kpis["Frete CN"] is not None else "N/A"
+    )
+
+with k6:
+    kpi_card(
+        "Frete EU",
+        format_br_number(premissas_kpis["Frete EU"], 2) if premissas_kpis["Frete EU"] is not None else "N/A"
+    )
+
+with k7:
+    kpi_card(
+        "USD/BRL",
+        format_br_number(premissas_kpis["USD/BRL"], 2) if premissas_kpis["USD/BRL"] is not None else "N/A"
+    )
+
+with k8:
+    kpi_card(
+        "EUR/BRL",
+        format_br_number(premissas_kpis["EUR/BRL"], 2) if premissas_kpis["EUR/BRL"] is not None else "N/A"
+    )
+
+with k9:
+    kpi_card(
+        "CNY/BRL",
+        format_br_number(premissas_kpis["CNY/BRL"], 2) if premissas_kpis["CNY/BRL"] is not None else "N/A"
+    )
 
 st.write("")
 
