@@ -523,6 +523,9 @@ with k4:
 # =========================================================
 # TABELA PRINCIPAL + EXPORTAÇÃO
 # =========================================================
+# =========================================================
+# TABELA PRINCIPAL + EXPORTAÇÃO
+# =========================================================
 st.markdown("<div class='section-title'>Tabela principal</div>", unsafe_allow_html=True)
 
 display_cols = [
@@ -570,17 +573,16 @@ for col in value_cols:
 
 for col in no_decimal_cols:
     if col in table_df_display.columns:
-        table_df_display[col] = table_df_display[col].apply(lambda x: "" if pd.isna(x) else format_no_decimal(x))
+        table_df_display[col] = table_df_display[col].apply(
+            lambda x: "" if pd.isna(x) else format_no_decimal(x)
+        )
 
 if "Último Preço" in table_df_display.columns:
     table_df_display["Último Preço"] = pd.to_datetime(
-        table_df_display["Último Preço"],
-        errors="coerce"
+        table_df_display["Último Preço"], errors="coerce"
     ).dt.strftime("%d/%m/%Y")
 
-# alinhamento
-all_cols = list(table_df_display.columns)
-
+# -------- alinhamentos desejados --------
 right_cols = [
     c for c in [
         "Current Price",
@@ -592,19 +594,96 @@ right_cols = [
 ]
 
 left_cols = [c for c in ["Supplier"] if c in table_df_display.columns]
+center_cols = [c for c in table_df_display.columns if c not in right_cols + left_cols]
 
-center_cols = [c for c in all_cols if c not in left_cols + right_cols]
+# -------- monta HTML da tabela --------
+def build_html_table(df_html, right_cols, left_cols, center_cols):
+    html = """
+    <style>
+    .custom-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #E5E7EB;
+        border-radius: 10px;
+        background: white;
+    }
 
-styled_table = (
-    table_df_display.style
-    .set_properties(subset=center_cols, **{"text-align": "center"})
-    .set_properties(subset=left_cols, **{"text-align": "left"})
-    .set_properties(subset=right_cols, **{"text-align": "right"})
-    .set_table_styles([
-        {"selector": "th", "props": [("text-align", "center"), ("font-size", "12px")]},
-        {"selector": "td", "props": [("font-size", "12px"), ("white-space", "nowrap")]},
-    ])
-)
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .custom-table thead th {
+        background: #F9FAFB;
+        color: #374151;
+        font-weight: 600;
+        text-align: center;
+        padding: 8px 10px;
+        border-bottom: 1px solid #E5E7EB;
+        border-right: 1px solid #E5E7EB;
+    }
+
+    .custom-table tbody td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #F1F5F9;
+        border-right: 1px solid #F1F5F9;
+        color: #111827;
+    }
+
+    .custom-table tbody tr:hover {
+        background: #F9FAFB;
+    }
+
+    .td-left {
+        text-align: left;
+    }
+
+    .td-center {
+        text-align: center;
+    }
+
+    .td-right {
+        text-align: right;
+    }
+    </style>
+    """
+
+    html += "<div class='custom-table-wrap'>"
+    html += "<table class='custom-table'>"
+
+    # cabeçalho
+    html += "<thead><tr>"
+    for col in df_html.columns:
+        html += f"<th>{col}</th>"
+    html += "</tr></thead>"
+
+    # corpo
+    html += "<tbody>"
+    for _, row in df_html.iterrows():
+        html += "<tr>"
+        for col in df_html.columns:
+            value = row[col]
+            value = "" if pd.isna(value) else str(value)
+
+            if col in right_cols:
+                cls = "td-right"
+            elif col in left_cols:
+                cls = "td-left"
+            else:
+                cls = "td-center"
+
+            html += f"<td class='{cls}'>{value}</td>"
+        html += "</tr>"
+    html += "</tbody>"
+
+    html += "</table></div>"
+    return html
+
+table_html = build_html_table(table_df_display, right_cols, left_cols, center_cols)
+st.markdown(table_html, unsafe_allow_html=True)
 
 st.dataframe(
     styled_table,
