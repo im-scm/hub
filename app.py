@@ -687,13 +687,16 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
     }
 
     .custom-table thead th {
+        position: sticky;
+        top: 0;
         background: #F9FAFB;
         color: #374151;
-        font-weight: 600;
+        font-weight: 700;
         text-align: center;
         padding: 8px 10px;
         border-bottom: 1px solid #E5E7EB;
         border-right: 1px solid #E5E7EB;
+        z-index: 3;
     }
 
     .custom-table tbody td {
