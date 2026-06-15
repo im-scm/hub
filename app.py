@@ -539,10 +539,7 @@ filtered = create_safe_multiselect(filtered, "Supplier", "Supplier", numeric_no_
 filtered = create_safe_multiselect(filtered, "Currency", "Currency", numeric_no_decimal=False)
 filtered = create_safe_multiselect(filtered, "Lot (ton)", "Lot (ton)", numeric_no_decimal=True)
 
-st.write("")
-st.write("")
-st.write("")
-st.write("")
+st.sidebar.markdown("<br><br>", unsafe_allow_html=True)
 
 st.sidebar.markdown(
     f"""
