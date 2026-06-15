@@ -6,6 +6,11 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+import os
+from datetime import datetime
+from openpyxl import load_workbook
+
+
 st.set_page_config(
     page_title="Cockpit Papel",
     layout="wide"
@@ -450,6 +455,34 @@ def load_premissas():
         "CNY/BRL": get_cell(25, 2),   # C26
     }
 
+def get_excel_last_update(file_path):
+    """
+    Tenta obter a última data de salvamento do Excel pelas propriedades internas.
+    Se não conseguir, usa a data de modificação do arquivo no sistema.
+    Retorna string formatada em dd/mm/yyyy HH:MM.
+    """
+    # 1) tenta ler a propriedade interna do workbook
+    try:
+        wb = load_workbook(file_path, read_only=True, keep_vba=True)
+        modified = wb.properties.modified
+
+        if modified is not None:
+            # remove timezone se houver, para evitar conflitos de formatação
+            if hasattr(modified, "tzinfo") and modified.tzinfo is not None:
+                modified = modified.replace(tzinfo=None)
+
+            return modified.strftime("%d/%m/%Y")
+    except Exception:
+        pass
+
+    # 2) fallback: data de modificação do arquivo no sistema
+    try:
+        ts = os.path.getmtime(file_path)
+        dt = datetime.fromtimestamp(ts)
+        return dt.strftime("%d/%m/%Y")
+    except Exception:
+        return "N/A"
+
 # =========================================================
 # LOAD
 # =========================================================
@@ -489,6 +522,8 @@ if df.empty:
     st.warning("A base foi carregada, mas não há registros utilizáveis após a limpeza.")
     st.stop()
 
+excel_last_update = get_excel_last_update(EXCEL_FILE)
+
 # =========================================================
 # SIDEBAR = FILTROS
 # =========================================================
@@ -503,6 +538,10 @@ filtered = create_safe_multiselect(filtered, "g/m2", "g/m2", numeric_no_decimal=
 filtered = create_safe_multiselect(filtered, "Supplier", "Supplier", numeric_no_decimal=False)
 filtered = create_safe_multiselect(filtered, "Currency", "Currency", numeric_no_decimal=False)
 filtered = create_safe_multiselect(filtered, "Lot (ton)", "Lot (ton)", numeric_no_decimal=True)
+
+st.write("")
+st.sidebar.caption(f"Última atualização: {excel_last_update}")
+st.sidebar.caption("App V1.0 - MLC.2026")
 
 # -----------------------------------------
 # BLOQUEIO SEM FILTRO
