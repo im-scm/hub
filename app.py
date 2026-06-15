@@ -563,26 +563,29 @@ with k9:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-k1, k2, k3, k4 = st.columns(4)
-
-with k1:
-    kpi_card("Impress Type", impress_value)
-
-with k2:
-    kpi_card(
-        "Melhor P.Value (R$/KG)",
-        format_br_number(best_pv_kg, 2) if best_pv_kg is not None else "N/A"
-    )
-
-with k3:
-    kpi_card(
-        "Melhor P.Value (R$/M2)",
-        format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A"
-    )
-
-with k4:
-    kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
-
+#==============
+# escondi esses KPI's para nao poluir demais a tela
+#
+#k1, k2, k3, k4 = st.columns(4)
+#
+#with k1:
+#    kpi_card("Impress Type", impress_value)
+#
+#with k2:
+#    kpi_card(
+#        "Melhor P.Value (R$/KG)",
+#        format_br_number(best_pv_kg, 2) if best_pv_kg is not None else "N/A"
+#    )
+#
+#with k3:
+#    kpi_card(
+#        "Melhor P.Value (R$/M2)",
+#        format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A"
+#    )
+#
+#with k4:
+#    kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
+#==============
 
 st.write("")
 
