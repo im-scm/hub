@@ -685,11 +685,13 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
 
     .custom-table {
         min-width: 1600px;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
         table-layout: auto;
         font-size: 12px;
         white-space: nowrap;
     }
+
 
     .custom-table thead th {
         position: sticky;
