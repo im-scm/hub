@@ -95,7 +95,7 @@ div[data-testid="stDownloadButton"] > button {
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(f"<div class='custom-title'>{APP_TITLE}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='custom-title'>{APP_TITLE}</div>", unsafe_allow_html=True))
 
 # =========================================================
 # HELPERS
@@ -535,12 +535,6 @@ display_cols = [
     "Supplier",
     "Currency",
     "Current Price",
-    "Paper bonus (t)",
-    "Lot (ton)",
-    "TCO (R$/KG)",
-    "TCO (R$/M2)",
-    "Payment Terms",
-    "Working days",
     "P.Value (R$/KG)",
     "P.Value (R$/M2)",
     "Última Atualização de Preço",
@@ -587,29 +581,6 @@ if "Último Preço" in table_df_display.columns:
         errors="coerce"
     ).dt.strftime("%d/%m/%Y")
 
-# exportação
-exp1, exp2, exp3 = st.columns([1.2, 1.2, 6])
-
-with exp1:
-    csv_bytes = table_df_display.to_csv(index=False, sep=";", encoding="utf-8-sig").encode("utf-8-sig")
-    st.download_button(
-        label="Exportar CSV",
-        data=csv_bytes,
-        file_name="cockpit_filtrado.csv",
-        mime="text/csv",
-        use_container_width=True
-    )
-
-with exp2:
-    excel_bytes = to_excel_bytes(table_df_display)
-    st.download_button(
-        label="Exportar Excel",
-        data=excel_bytes,
-        file_name="cockpit_filtrado.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        use_container_width=True
-    )
-
 # alinhamento
 all_cols = list(table_df_display.columns)
 left_cols = [c for c in ["Supplier"] if c in table_df_display.columns]
@@ -651,6 +622,28 @@ st.dataframe(
     }
 )
 
+# exportação
+exp1, exp2, exp3 = st.columns([1.2, 1.2, 6])
+
+with exp1:
+    csv_bytes = table_df_display.to_csv(index=False, sep=";", encoding="utf-8-sig").encode("utf-8-sig")
+    st.download_button(
+        label="Exportar CSV",
+        data=csv_bytes,
+        file_name="cockpit_filtrado.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
+
+with exp2:
+    excel_bytes = to_excel_bytes(table_df_display)
+    st.download_button(
+        label="Exportar Excel",
+        data=excel_bytes,
+        file_name="cockpit_filtrado.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        use_container_width=True
+    )
 # =========================================================
 # GRÁFICO TCO MÉDIO (ABAIXO DA TABELA)
 # =========================================================
