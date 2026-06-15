@@ -95,8 +95,10 @@ div[data-testid="stDownloadButton"] > button {
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(f"<div class='custom-title'>{APP_TITLE}</div>", unsafe_allow_html=True))
-
+st.markdown(
+    f"<div class='custom-title'>{APP_TITLE}</div>",
+    unsafe_allow_html=True
+)
 # =========================================================
 # HELPERS
 # =========================================================
