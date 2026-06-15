@@ -20,20 +20,20 @@ APP_TITLE = "Cockpit Papel"
 # =========================================================
 st.markdown("""
 <style>
-/* sobe conteúdo e usa melhor o espaço */
+/* mantém compacto, mas sem esconder o topo */
 .block-container {
-    padding-top: 0.30rem !important;
+    padding-top: 1.20rem !important;
     padding-bottom: 0.60rem !important;
     max-width: 100% !important;
 }
 
-/* título menor e compacto */
+/* título visível e com respiro */
 .custom-title {
     font-size: 1.35rem;
     font-weight: 700;
-    margin-top: 0.40rem;
-    margin-bottom: 0.40rem;
-    line-height: 1.02;
+    margin-top: 0.00rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
     color: #1F2937;
 }
 
@@ -92,10 +92,7 @@ div[data-testid="stDownloadButton"] > button {
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(
-    f"<div class='custom-title'>{APP_TITLE}</div>",
-    unsafe_allow_html=True
-)
+st.title(APP_TITLE)
 
 # =========================================================
 # HELPERS
