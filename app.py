@@ -514,20 +514,20 @@ if filtered.shape[0] == df.shape[0]:
 # =========================================================
 # KPI
 # =========================================================
-best_pv_kg = safe_min(filtered["P.Value (R$/KG)"]) if "P.Value (R$/KG)" in filtered.columns else None
-best_pv_m2 = safe_min(filtered["P.Value (R$/M2)"]) if "P.Value (R$/M2)" in filtered.columns else None
-best_row = safe_best_row(filtered, "P.Value (R$/KG)") if "P.Value (R$/KG)" in filtered.columns else None
-
-best_supplier = best_row["Supplier"] if best_row is not None and "Supplier" in filtered.columns else "N/A"
-
-if "Impress Type" in filtered.columns:
-    unique_impress = filtered["Impress Type"].dropna().unique().tolist()
-    if len(unique_impress) == 1:
-        impress_value = str(unique_impress[0])
-    else:
-        impress_value = f"{len(unique_impress)} tipos"
-else:
-    impress_value = "N/A"
+#best_pv_kg = safe_min(filtered["P.Value (R$/KG)"]) if "P.Value (R$/KG)" in filtered.columns else None
+#best_pv_m2 = safe_min(filtered["P.Value (R$/M2)"]) if "P.Value (R$/M2)" in filtered.columns else None
+#best_row = safe_best_row(filtered, "P.Value (R$/KG)") if "P.Value (R$/KG)" in filtered.columns else None
+#
+#best_supplier = best_row["Supplier"] if best_row is not None and "Supplier" in filtered.columns else "N/A"
+#
+#if "Impress Type" in filtered.columns:
+#    unique_impress = filtered["Impress Type"].dropna().unique().tolist()
+#    if len(unique_impress) == 1:
+#        impress_value = str(unique_impress[0])
+#    else:
+#        impress_value = f"{len(unique_impress)} tipos"
+#else:
+#    impress_value = "N/A"
 
 k5, k6, k7, k8, k9 = st.columns(5)
 
