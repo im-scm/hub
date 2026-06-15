@@ -687,13 +687,10 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
 table_html = build_html_table(table_df_display, right_cols, left_cols, center_cols)
 st.markdown(table_html, unsafe_allow_html=True)
 
+st.write("")
+
 # exportação
 exp1, exp2, exp3 = st.columns([1.2, 1.2, 6])
-
-st.write("")
-st.write("")
-st.write("")
-
 with exp1:
     csv_bytes = table_df_display.to_csv(index=False, sep=";", encoding="utf-8-sig").encode("utf-8-sig")
     st.download_button(
