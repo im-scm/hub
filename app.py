@@ -669,9 +669,13 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
     .custom-table-wrap {
         width: 100%;
         overflow-x: auto;
+        overflow-y: auto;
+        max-height: 520px;
+        margin-top: 0.35rem;
+        margin-bottom: 0.75rem;
         border: 1px solid #E5E7EB;
-        border-radius: 10px;
-        background: white;
+        border-radius: 12px;
+        background: #FFFFFF;
     }
 
     .custom-table {
