@@ -511,24 +511,6 @@ if filtered.shape[0] == df.shape[0]:
     st.info("Selecione pelo menos um filtro para visualizar os dados.")
     st.stop()
 
-# =========================================================
-# KPI
-# =========================================================
-#best_pv_kg = safe_min(filtered["P.Value (R$/KG)"]) if "P.Value (R$/KG)" in filtered.columns else None
-#best_pv_m2 = safe_min(filtered["P.Value (R$/M2)"]) if "P.Value (R$/M2)" in filtered.columns else None
-#best_row = safe_best_row(filtered, "P.Value (R$/KG)") if "P.Value (R$/KG)" in filtered.columns else None
-#
-#best_supplier = best_row["Supplier"] if best_row is not None and "Supplier" in filtered.columns else "N/A"
-#
-#if "Impress Type" in filtered.columns:
-#    unique_impress = filtered["Impress Type"].dropna().unique().tolist()
-#    if len(unique_impress) == 1:
-#        impress_value = str(unique_impress[0])
-#    else:
-#        impress_value = f"{len(unique_impress)} tipos"
-#else:
-#    impress_value = "N/A"
-
 k5, k6, k7, k8, k9 = st.columns(5)
 
 with k5:
@@ -562,30 +544,6 @@ with k9:
     )
 
 st.markdown("<br>", unsafe_allow_html=True)
-
-#==============
-# escondi esses KPI's para nao poluir demais a tela
-#
-#k1, k2, k3, k4 = st.columns(4)
-#
-#with k1:
-#    kpi_card("Impress Type", impress_value)
-#
-#with k2:
-#    kpi_card(
-#        "Melhor P.Value (R$/KG)",
-#        format_br_number(best_pv_kg, 2) if best_pv_kg is not None else "N/A"
-#    )
-#
-#with k3:
-#    kpi_card(
-#        "Melhor P.Value (R$/M2)",
-#        format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A"
-#    )
-#
-#with k4:
-#    kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
-#==============
 
 st.write("")
 
@@ -833,6 +791,45 @@ if {"Supplier", "TCO (R$/KG)"}.issubset(filtered.columns):
         st.info("Sem dados válidos para exibir o gráfico.")
 else:
     st.info("As colunas necessárias para o gráfico não estão disponíveis.")
+
+
+# =========================================================
+# KPI 2
+# =========================================================
+best_pv_kg = safe_min(filtered["P.Value (R$/KG)"]) if "P.Value (R$/KG)" in filtered.columns else None
+best_pv_m2 = safe_min(filtered["P.Value (R$/M2)"]) if "P.Value (R$/M2)" in filtered.columns else None
+best_row = safe_best_row(filtered, "P.Value (R$/KG)") if "P.Value (R$/KG)" in filtered.columns else None
+
+best_supplier = best_row["Supplier"] if best_row is not None and "Supplier" in filtered.columns else "N/A"
+
+if "Impress Type" in filtered.columns:
+    unique_impress = filtered["Impress Type"].dropna().unique().tolist()
+    if len(unique_impress) == 1:
+        impress_value = str(unique_impress[0])
+    else:
+        impress_value = f"{len(unique_impress)} tipos"
+else:
+    impress_value = "N/A"
+
+k1, k2, k3, k4 = st.columns(4)
+
+with k1:
+    kpi_card("Impress Type", impress_value)
+
+with k2:
+    kpi_card(
+        "Melhor P.Value (R$/KG)",
+        format_br_number(best_pv_kg, 2) if best_pv_kg is not None else "N/A"
+    )
+
+with k3:
+    kpi_card(
+        "Melhor P.Value (R$/M2)",
+        format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A"
+    )
+
+with k4:
+    kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
 
 # =========================================================
 # RODAPÉ
