@@ -545,8 +545,9 @@ st.write("")
 st.sidebar.markdown(
     f"""
     <div style="font-size: 12px; color: #6B7280;">
+    Cockpit_Papel.xlsx<br>
     Última atualização: {excel_last_update}<br>
-    Versão 1.0
+    App V1.0 - MLC_2026
     </div>
     """,
     unsafe_allow_html=True
