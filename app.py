@@ -592,9 +592,6 @@ st.write("")
 # =========================================================
 # TABELA PRINCIPAL + EXPORTAÇÃO
 # =========================================================
-# =========================================================
-# TABELA PRINCIPAL + EXPORTAÇÃO
-# =========================================================
 st.markdown("<div class='section-title'>Tabela principal</div>", unsafe_allow_html=True)
 
 display_cols = [
@@ -607,7 +604,7 @@ display_cols = [
     "P.Value (R$/M2)",
     "Última Atualização de Preço",
     "Width (mm)",
-    "Payment Terms"
+    "Payment Terms",
     "Lot (ton)",    
 ]
 
@@ -636,6 +633,7 @@ no_decimal_cols = [
     "Paper bonus (t)",
     "Lot (ton)",
     "Working days",
+    "Payment Terms",
 ]
 
 for col in value_cols:
