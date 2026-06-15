@@ -520,6 +520,8 @@ with k3:
 with k4:
     kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
 
+st.write("")
+
 # =========================================================
 # TABELA PRINCIPAL + EXPORTAÇÃO
 # =========================================================
@@ -687,6 +689,8 @@ st.markdown(table_html, unsafe_allow_html=True)
 
 # exportação
 exp1, exp2, exp3 = st.columns([1.2, 1.2, 6])
+
+st.write("")
 
 with exp1:
     csv_bytes = table_df_display.to_csv(index=False, sep=";", encoding="utf-8-sig").encode("utf-8-sig")
