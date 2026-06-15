@@ -596,14 +596,16 @@ st.markdown("<div class='section-title'>Tabela principal</div>", unsafe_allow_ht
 
 display_cols = [
     "Impress Type",
-    "Width (mm)",
     "g/m2",
     "Supplier",
-    "Currency",
     "Current Price",
+    "Currency",
     "P.Value (R$/KG)",
     "P.Value (R$/M2)",
     "Última Atualização de Preço",
+    "Width (mm)",
+    "Payment Terms"
+    "Lot (ton)",    
 ]
 
 display_cols = [c for c in display_cols if c in filtered.columns]
