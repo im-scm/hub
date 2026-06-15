@@ -481,7 +481,8 @@ filtered = create_safe_multiselect(filtered, "Lot (ton)", "Lot (ton)", numeric_n
 # -----------------------------------------
 # BLOQUEIO SEM FILTRO
 # -----------------------------------------
-if filtered.shape[0] == df.shapest.info("Selecione pelo menos um filtro para visualizar os dados.")
+if filtered.shape[0] == df.shape[0]:
+    st.info("Selecione pelo menos um filtro para visualizar os dados.")
     st.stop()
 
 # =========================================================
