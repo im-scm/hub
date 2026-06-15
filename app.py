@@ -580,8 +580,19 @@ if "Último Preço" in table_df_display.columns:
 
 # alinhamento
 all_cols = list(table_df_display.columns)
+
+right_cols = [
+    c for c in [
+        "Current Price",
+        "TCO (R$/KG)",
+        "TCO (R$/M2)",
+        "P.Value (R$/KG)",
+        "P.Value (R$/M2)",
+    ] if c in table_df_display.columns
+]
+
 left_cols = [c for c in ["Supplier"] if c in table_df_display.columns]
-right_cols = [c for c in value_cols if c in table_df_display.columns]
+
 center_cols = [c for c in all_cols if c not in left_cols + right_cols]
 
 styled_table = (
@@ -601,21 +612,17 @@ st.dataframe(
     hide_index=True,
     height=540,
     column_config={
-        "Impress Type": st.column_config.TextColumn("Impress Type", width="medium"),
+        "Impress Type": st.column_config.TextColumn("Impress Type", width="small"),
         "Width (mm)": st.column_config.TextColumn("Width (mm)", width="small"),
         "g/m2": st.column_config.TextColumn("g/m2", width="small"),
-        "Supplier": st.column_config.TextColumn("Supplier", width="large"),
+        "Supplier": st.column_config.TextColumn("Supplier", width="medium"),
         "Currency": st.column_config.TextColumn("Currency", width="small"),
-        "Current Price": st.column_config.TextColumn("Current Price", width="medium"),
-        "Paper bonus (t)": st.column_config.TextColumn("Paper bonus (t)", width="small"),
-        "Lot (ton)": st.column_config.TextColumn("Lot (ton)", width="small"),
-        "TCO (R$/KG)": st.column_config.TextColumn("TCO (R$/KG)", width="medium"),
-        "TCO (R$/M2)": st.column_config.TextColumn("TCO (R$/M2)", width="medium"),
-        "Payment Terms": st.column_config.TextColumn("Payment Terms", width="medium"),
-        "Working days": st.column_config.TextColumn("Working days", width="small"),
-        "P.Value (R$/KG)": st.column_config.TextColumn("P.Value (R$/KG)", width="medium"),
-        "P.Value (R$/M2)": st.column_config.TextColumn("P.Value (R$/M2)", width="medium"),
-        "Último Preço": st.column_config.TextColumn("Último Preço", width="medium"),
+        "Current Price": st.column_config.TextColumn("Current Price", width="small"),
+        "TCO (R$/KG)": st.column_config.TextColumn("TCO (R$/KG)", width="small"),
+        "TCO (R$/M2)": st.column_config.TextColumn("TCO (R$/M2)", width="small"),
+        "P.Value (R$/KG)": st.column_config.TextColumn("P.Value (R$/KG)", width="small"),
+        "P.Value (R$/M2)": st.column_config.TextColumn("P.Value (R$/M2)", width="small"),
+        "Último Preço": st.column_config.TextColumn("Último Preço", width="small"),
     }
 )
 
