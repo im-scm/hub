@@ -638,13 +638,13 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
     }
 
     .custom-table {
-        min-width: 1600px;
+        width: max-content;
+        min-width: 100%
         border-collapse: separate;
         border-spacing: 0;
         table-layout: auto;
         font-size: 12px;
-        white-space: nowrap;
-    }
+     }
 
 
     .custom-table thead th {
@@ -658,6 +658,8 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
         border-bottom: 1px solid #E5E7EB;
         border-right: 1px solid #E5E7EB;
         z-index: 3;
+        white-space: normal;
+        line-height: 1.1;
     }
 
     .custom-table tbody td {
@@ -665,6 +667,7 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
         border-bottom: 1px solid #F1F5F9;
         border-right: 1px solid #F1F5F9;
         color: #111827;
+        white-space: nowrap;
     }
 
     .custom-table tbody tr:hover {
