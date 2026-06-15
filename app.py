@@ -684,7 +684,7 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
     }
 
     .custom-table {
-        width: 100%;
+        min-width: 1600px;
         border-collapse: collapse;
         table-layout: auto;
         font-size: 12px;
