@@ -541,6 +541,8 @@ filtered = create_safe_multiselect(filtered, "Lot (ton)", "Lot (ton)", numeric_n
 
 st.write("")
 st.write("")
+st.write("")
+st.write("")
 
 st.sidebar.markdown(
     f"""
