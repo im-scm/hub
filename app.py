@@ -540,8 +540,17 @@ filtered = create_safe_multiselect(filtered, "Currency", "Currency", numeric_no_
 filtered = create_safe_multiselect(filtered, "Lot (ton)", "Lot (ton)", numeric_no_decimal=True)
 
 st.write("")
-st.sidebar.caption(f"Última atualização: {excel_last_update}")
-st.sidebar.caption("App V1.0 - MLC.2026")
+st.write("")
+
+st.sidebar.markdown(
+    f"""
+    <div style="font-size: 12px; color: #6B7280;">
+    Última atualização: {excel_last_update}<br>
+    Versão 1.0
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # -----------------------------------------
 # BLOQUEIO SEM FILTRO
