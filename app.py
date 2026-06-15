@@ -685,26 +685,6 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
 table_html = build_html_table(table_df_display, right_cols, left_cols, center_cols)
 st.markdown(table_html, unsafe_allow_html=True)
 
-st.dataframe(
-    styled_table,
-    use_container_width=True,
-    hide_index=True,
-    height=540,
-    column_config={
-        "Impress Type": st.column_config.TextColumn("Impress Type", width="small"),
-        "Width (mm)": st.column_config.TextColumn("Width (mm)", width="small"),
-        "g/m2": st.column_config.TextColumn("g/m2", width="small"),
-        "Supplier": st.column_config.TextColumn("Supplier", width="medium"),
-        "Currency": st.column_config.TextColumn("Currency", width="small"),
-        "Current Price": st.column_config.TextColumn("Current Price", width="small"),
-        "TCO (R$/KG)": st.column_config.TextColumn("TCO (R$/KG)", width="small"),
-        "TCO (R$/M2)": st.column_config.TextColumn("TCO (R$/M2)", width="small"),
-        "P.Value (R$/KG)": st.column_config.TextColumn("P.Value (R$/KG)", width="small"),
-        "P.Value (R$/M2)": st.column_config.TextColumn("P.Value (R$/M2)", width="small"),
-        "Último Preço": st.column_config.TextColumn("Último Preço", width="small"),
-    }
-)
-
 # exportação
 exp1, exp2, exp3 = st.columns([1.2, 1.2, 6])
 
