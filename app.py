@@ -661,7 +661,7 @@ def build_html_table(df_html, right_cols, left_cols, center_cols):
     }
 
     .custom-table tbody td {
-        padding: 6px 6px;
+        padding: 5px 6px;
         border-bottom: 1px solid #F1F5F9;
         border-right: 1px solid #F1F5F9;
         color: #111827;
