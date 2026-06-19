@@ -372,7 +372,7 @@ def build_export_table(df_in):
 def build_html_table(df_html, table_height_px=560):
     if df_html.empty:
         return "<div class='mlc-note'>Sem registros para exibir.</div>"
-    numeric_right_cols = {"Current Price", "P.Value (R$/KG)", "P.Value (R$/M2)", "Payment Terms", "Lot (ton)", "g/m2"}
+    numeric_right_cols = {"Current Price", "P.Value (R$/KG)", "P.Value (R$/M2)"}
     left_cols = {"Supplier"}
     html_parts = ["<div class='mlc-table-shell'>", f"<div class='mlc-table-wrap' style='max-height:{int(table_height_px)}px;'>", "<table class='mlc-table'>", "<thead><tr>"]
     for col in df_html.columns:
