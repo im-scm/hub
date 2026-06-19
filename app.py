@@ -31,7 +31,7 @@ st.markdown(
         .mlc-table-wrap {max-height: 560px; overflow-y: auto; overflow-x: auto;}
         .mlc-table {width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; font-size: 0.84rem; color: #111827;}
         .mlc-table thead th {position: sticky; top: 0; z-index: 2; background: #F9FAFB; color: #6B7280; font-weight: 500; text-align: center; border-bottom: 1px solid #E5E7EB; border-right: 1px solid #F0F2F5; padding: 10px 12px; white-space: nowrap;}
-        .mlc-table tbody td {padding: 9px 12px; border-bottom: 1px solid #F3F4F6; border-right: 1px solid #F8FAFC; white-space: nowrap; background: #FFFFFF;}
+        .mlc-table tbody td {padding: 5px 12px; border-bottom: 1px solid #F3F4F6; border-right: 1px solid #F8FAFC; white-space: nowrap; background: #FFFFFF;}
         .mlc-table tbody tr:hover td {background: #FAFBFF;}
         .mlc-left { text-align: left; }
         .mlc-center { text-align: center; }
