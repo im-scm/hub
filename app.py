@@ -44,8 +44,6 @@ st.markdown(
 )
 
 st.title(APP_TITLE)
-st.caption("Visão analítica limpa, com remoção automática de linhas obsoletas, auditoria da limpeza e tabela executiva com alinhamento profissional.")
-
 
 def normalize_text(value):
     if value is None or pd.isna(value):
@@ -461,7 +459,6 @@ with col_f3: kpi_card("USD/BRL", format_br_number(premissas_kpis["USD/BRL"], 2) 
 with col_f4: kpi_card("EUR/BRL", format_br_number(premissas_kpis["EUR/BRL"], 2) if premissas_kpis["EUR/BRL"] is not None else "N/A")
 with col_f5: kpi_card("CNY/BRL", format_br_number(premissas_kpis["CNY/BRL"], 2) if premissas_kpis["CNY/BRL"] is not None else "N/A")
 
-st.markdown("<div class='mlc-section-title'><h3>Tabela principal</h3></div>", unsafe_allow_html=True)
 table_df_display = build_export_table(filtered)
 table_html = build_html_table(table_df_display, table_height_px=TABLE_HEIGHT_PX)
 st.markdown(table_html, unsafe_allow_html=True)
