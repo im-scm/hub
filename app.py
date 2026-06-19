@@ -44,11 +44,11 @@ st.markdown(
 )
 
 st.markdown(
-    f\"\"\"
+    f"""
     <h1 style='font-size: 1.9rem; margin-bottom: 0.2rem; color: #111827;'>
         {APP_TITLE}
     </h1>
-    \"\"\",
+    """,
     unsafe_allow_html=True,
 )
 
