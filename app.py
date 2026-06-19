@@ -1,4 +1,3 @@
-
 import os
 import re
 import unicodedata
@@ -461,13 +460,6 @@ with col_f2: kpi_card("Frete EU", format_br_number(premissas_kpis["Frete EU"], 2
 with col_f3: kpi_card("USD/BRL", format_br_number(premissas_kpis["USD/BRL"], 2) if premissas_kpis["USD/BRL"] is not None else "N/A")
 with col_f4: kpi_card("EUR/BRL", format_br_number(premissas_kpis["EUR/BRL"], 2) if premissas_kpis["EUR/BRL"] is not None else "N/A")
 with col_f5: kpi_card("CNY/BRL", format_br_number(premissas_kpis["CNY/BRL"], 2) if premissas_kpis["CNY/BRL"] is not None else "N/A")
-
-# Auditoria
-a1, a2, a3, a4 = st.columns(4)
-with a1: kpi_card("Linhas originais", format_no_decimal(audit_info["original_count"]))
-with a2: kpi_card("Linhas removidas", format_no_decimal(audit_info["removed_count"]))
-with a3: kpi_card("Linhas finais", format_no_decimal(audit_info["final_count"]))
-with a4: kpi_card("Redução da base", f"{format_br_number(audit_info['reduction_pct'], 1)}%")
 
 st.markdown("<div class='mlc-section-title'><h3>Tabela principal</h3></div>", unsafe_allow_html=True)
 table_df_display = build_export_table(filtered)
