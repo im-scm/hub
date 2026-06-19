@@ -469,7 +469,7 @@ st.write("")
 table_df_display = build_export_table(filtered)
 table_html = build_html_table(table_df_display, table_height_px=TABLE_HEIGHT_PX)
 st.markdown(table_html, unsafe_allow_html=True)
-st.markdown("<div class='mlc-note'>Tabela ordenada automaticamente do menor para o maior em P.Value (R$/M2). Alinhamento aplicado: números à direita, Supplier à esquerda e demais colunas centralizadas.</div>", unsafe_allow_html=True)
+st.markdown("<div class='mlc-note'>Tabela ordenada automaticamente do menor para o maior em P.Value (R$/M2).</div>", unsafe_allow_html=True)
 
 exp1, exp2, _ = st.columns([1.2, 1.2, 6])
 with exp1:
