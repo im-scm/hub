@@ -428,7 +428,6 @@ excel_last_update = get_excel_last_update(EXCEL_FILE)
 
 with st.sidebar:
     st.markdown("### Assistente de Análise")
-    st.caption(APP_VERSION)
     st.divider()
 filtered = df.copy()
 filtered = create_safe_multiselect(filtered, "Impress Type", "Impress Type")
@@ -442,10 +441,10 @@ with st.sidebar:
         f"""
         <div style='font-size:0.92rem;color:#111827;'><b>Cockpit_Papel.xlsm</b></div>
         <div style='font-size:0.88rem;color:#4B5563;'>Última atualização: {excel_last_update}</div>
-        <div style='font-size:0.80rem;color:#6B7280;'>Tabela ordenada automaticamente por menor P.Value (R$/M2)</div>
         """,
         unsafe_allow_html=True,
     )
+    st.caption(APP_VERSION)
 
 if filtered.shape[0] == df.shape[0]:
     st.info("Selecione pelo menos um filtro para visualizar os dados.")
