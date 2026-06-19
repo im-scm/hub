@@ -22,7 +22,7 @@ TABLE_HEIGHT_PX = 560
 st.markdown(
     """
     <style>
-        .block-container {padding-top: 0.5rem; padding-bottom: 1.2rem;}
+        .block-container {padding-top: 1.0rem; padding-bottom: 1.2rem;}
         .mlc-kpi {border: 1px solid #E5E7EB; border-radius: 14px; padding: 14px 16px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.04); min-height: 86px;}
         .mlc-kpi-label {font-size: 0.84rem; color: #6B7280; margin-bottom: 6px;}
         .mlc-kpi-value {font-size: 1.30rem; font-weight: 700; color: #111827; line-height: 1.2;}
