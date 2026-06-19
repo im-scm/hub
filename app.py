@@ -492,8 +492,7 @@ if {"Supplier", "TCO (R$/KG)"}.issubset(filtered.columns):
         fig_bar.update_layout(showlegend=False, height=420, margin=dict(t=10, r=20, l=20, b=20), xaxis_title="Supplier", yaxis_title="TCO (R$/KG)", plot_bgcolor="white", paper_bgcolor="white")
         fig_bar.update_xaxes(showgrid=False)
         fig_bar.update_yaxes(showgrid=True, gridcolor="#E5E7EB")
-        st.plotly_chart(fig_bar, width="stretch")
-        st.caption("Fonte: aba 'Preços e Condições' do arquivo Cockpit_Papel.xlsm, após remoção de linhas obsoletas e limpeza analítica.")
+        st.plotly_chart(fig_bar, width="stretch")        
     else:
         st.info("Sem dados válidos para exibir o gráfico.")
 else:
@@ -518,5 +517,3 @@ with k2: kpi_card("Melhor P.Value (R$/KG)", format_br_number(best_pv_kg, 2) if b
 with k3: kpi_card("Melhor P.Value (R$/M2)", format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A")
 with k4: kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
 with k5: kpi_card("Último preço considerado", latest_price_str)
-
-st.caption(f"Registros exibidos após filtros: {record_count}. Critério de remoção de obsolescência: se duas linhas têm a mesma visão exibida na tabela principal, o app mantém apenas a mais recente em 'Última Atualização de Preço'.")
