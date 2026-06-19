@@ -26,7 +26,7 @@ def normalize_text(value):
     text = str(value).strip().lower()
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8")
     text = text.replace("
-", " ")
+    ", " ")
     text = re.sub(r"\s+", " ", text)
     return text
 
