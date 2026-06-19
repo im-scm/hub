@@ -16,57 +16,28 @@ EXCEL_FILE = "Cockpit_Papel.xlsm"
 SOURCE_SHEET = "Preços e Condições"
 PREMISSAS_SHEET = "Premissas"
 APP_TITLE = "Cockpit Papel"
-APP_VERSION = "V2.0"
+APP_VERSION = "V2.1"
 
-
-# =========================================================
-# ESTILO
-# =========================================================
 st.markdown(
     """
     <style>
         .block-container {padding-top: 1.2rem; padding-bottom: 1.2rem;}
-        .mlc-kpi {
-            border: 1px solid #E5E7EB;
-            border-radius: 14px;
-            padding: 14px 16px;
-            background: #FFFFFF;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-        }
-        .mlc-kpi-label {
-            font-size: 0.84rem;
-            color: #6B7280;
-            margin-bottom: 6px;
-        }
-        .mlc-kpi-value {
-            font-size: 1.30rem;
-            font-weight: 700;
-            color: #111827;
-            line-height: 1.2;
-        }
-        .mlc-section-title {
-            margin-top: 0.4rem;
-            margin-bottom: 0.8rem;
-        }
-        .stDataFrame, div[data-testid="stDataFrame"] {
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+        .mlc-kpi {border: 1px solid #E5E7EB; border-radius: 14px; padding: 14px 16px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.04);} 
+        .mlc-kpi-label {font-size: 0.84rem; color: #6B7280; margin-bottom: 6px;}
+        .mlc-kpi-value {font-size: 1.30rem; font-weight: 700; color: #111827; line-height: 1.2;}
+        .mlc-section-title {margin-top: 0.4rem; margin-bottom: 0.8rem;}
+        .stDataFrame, div[data-testid="stDataFrame"] {border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden;}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 st.title(APP_TITLE)
-st.caption("Visão analítica limpa, com deduplicação inteligente e priorização do registro mais recente.")
+st.caption("Visão analítica limpa, com remoção de obsoletos e priorização automática do preço mais recente.")
 
 
-# =========================================================
-# HELPERS
-# =========================================================
 def normalize_text(value):
-    if value is None:
+    if value is None or pd.isna(value):
         return ""
     text = str(value).strip().lower()
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8")
@@ -143,8 +114,6 @@ def safe_display_string(value, numeric_no_decimal=False):
     if numeric_no_decimal:
         return format_no_decimal(value)
     if isinstance(value, pd.Timestamp):
-        if pd.isna(value):
-            return ""
         return value.strftime("%d/%m/%Y")
     return str(value)
 
@@ -154,7 +123,6 @@ def detect_header_row(raw_df):
     best_row = None
     best_score = -1
     max_rows = min(len(raw_df), 50)
-
     for i in range(max_rows):
         row_values = [normalize_text(v) for v in raw_df.iloc[i].tolist()]
         row_text = " | ".join(row_values)
@@ -162,7 +130,6 @@ def detect_header_row(raw_df):
         if score > best_score:
             best_score = score
             best_row = i
-
     return best_row if best_score >= 2 else None
 
 
@@ -226,7 +193,6 @@ def get_excel_last_update(file_path):
             return modified.strftime("%d/%m/%Y")
     except Exception:
         pass
-
     try:
         ts = os.path.getmtime(file_path)
         dt = datetime.fromtimestamp(ts)
@@ -237,14 +203,12 @@ def get_excel_last_update(file_path):
 
 def load_premissas():
     premissas = pd.read_excel(EXCEL_FILE, sheet_name=PREMISSAS_SHEET, header=None)
-
     def get_cell(row_idx, col_idx):
         try:
             value = premissas.iat[row_idx, col_idx]
             return None if pd.isna(value) else value
         except Exception:
             return None
-
     return {
         "Frete CN": get_cell(5, 2),
         "Frete EU": get_cell(4, 2),
@@ -256,10 +220,13 @@ def load_premissas():
 
 def deduplicate_for_analysis(df_in):
     """
-    Regras:
-    - Material Number e Width (mm) ficam fora da visão analítica.
-    - Se, após remover esses campos, sobrarem linhas idênticas,
-      mantém somente a linha com a data mais recente.
+    Regra definitiva:
+    1) remove Material Number e Width (mm) da análise
+    2) define como duplicado qualquer linha com a MESMA visão que aparece na tabela principal
+    3) mantém apenas o registro com a data mais recente
+
+    Isso resolve exatamente o caso do print: mesmas colunas visíveis,
+    mas datas diferentes -> fica só a mais nova.
     """
     df_work = df_in.copy()
     if df_work.empty:
@@ -270,12 +237,32 @@ def deduplicate_for_analysis(df_in):
         df_work[date_col] = pd.to_datetime(df_work[date_col], errors="coerce", dayfirst=True)
         df_work = df_work.sort_values(by=date_col, ascending=False, na_position="last", kind="stable")
 
-    # Chave analítica: tudo que sobrou, exceto a própria data.
-    key_cols = [c for c in df_work.columns if c != date_col]
-    if key_cols:
-        df_work = df_work.drop_duplicates(subset=key_cols, keep="first")
+    # A chave de deduplicação agora replica a TABELA PRINCIPAL.
+    # Se tudo que o usuário vê for igual, o mais antigo é obsoleto.
+    display_key_cols = [
+        "Impress Type",
+        "g/m2",
+        "Supplier",
+        "Current Price",
+        "Currency",
+        "P.Value (R$/KG)",
+        "P.Value (R$/M2)",
+        "Payment Terms",
+        "Lot (ton)",
+    ]
+    key_cols = [c for c in display_key_cols if c in df_work.columns]
 
-    final_sort = [c for c in ["Impress Type", "g/m2", "Supplier", "Lot (ton)"] if c in df_work.columns]
+    if not key_cols:
+        key_cols = [c for c in df_work.columns if c != date_col]
+
+    # Normaliza campos de texto para evitar falso negativo por espaço/acento/caixa.
+    for col in key_cols:
+        if pd.api.types.is_object_dtype(df_work[col]):
+            df_work[col] = df_work[col].apply(normalize_text)
+
+    df_work = df_work.drop_duplicates(subset=key_cols, keep="first")
+
+    final_sort = [c for c in ["Impress Type", "g/m2", "Supplier", "Current Price"] if c in df_work.columns]
     if final_sort:
         df_work = df_work.sort_values(final_sort, kind="stable")
 
@@ -309,25 +296,10 @@ def build_canonical_dataframe(df):
             rename_map[original] = canonical_name
 
     df2 = df.rename(columns=rename_map).copy()
-
-    # Mantemos Material Number e Width momentaneamente só para descartá-los com segurança.
     ordered_cols = [
-        "Material Number",
-        "Impress Type",
-        "Width (mm)",
-        "g/m2",
-        "Supplier",
-        "Currency",
-        "Current Price",
-        "Paper bonus (t)",
-        "Lot (ton)",
-        "TCO (R$/KG)",
-        "TCO (R$/M2)",
-        "Payment Terms",
-        "Working days",
-        "P.Value (R$/KG)",
-        "P.Value (R$/M2)",
-        "Última Atualização de Preço",
+        "Material Number", "Impress Type", "Width (mm)", "g/m2", "Supplier", "Currency",
+        "Current Price", "Paper bonus (t)", "Lot (ton)", "TCO (R$/KG)", "TCO (R$/M2)",
+        "Payment Terms", "Working days", "P.Value (R$/KG)", "P.Value (R$/M2)", "Última Atualização de Preço",
     ]
     existing_cols = [c for c in ordered_cols if c in df2.columns]
     df2 = df2[existing_cols].copy()
@@ -341,9 +313,7 @@ def build_canonical_dataframe(df):
             df2[col] = series_to_numeric(df2[col])
 
     if "Última Atualização de Preço" in df2.columns:
-        df2["Última Atualização de Preço"] = pd.to_datetime(
-            df2["Última Atualização de Preço"], errors="coerce", dayfirst=True
-        )
+        df2["Última Atualização de Preço"] = pd.to_datetime(df2["Última Atualização de Preço"], errors="coerce", dayfirst=True)
 
     if "TCO (R$/KG)" not in df2.columns and "Current Price" in df2.columns:
         df2["TCO (R$/KG)"] = df2["Current Price"]
@@ -363,35 +333,27 @@ def build_canonical_dataframe(df):
     elif "TCO (R$/KG)" in df2.columns:
         df2 = df2[df2["TCO (R$/KG)"].notna()]
 
-    # Remove campos irrelevantes para a análise.
     cols_to_drop = [c for c in ["Material Number", "Width (mm)"] if c in df2.columns]
     if cols_to_drop:
         df2 = df2.drop(columns=cols_to_drop)
 
-    # Deduplicação inteligente.
     df2 = deduplicate_for_analysis(df2)
-
     return df2
 
 
 def create_safe_multiselect(df_in, column_name, label, numeric_no_decimal=False):
     if column_name not in df_in.columns:
         return df_in
-
     source = df_in[column_name].dropna().copy()
     if source.empty:
         return df_in
 
     opt_df = pd.DataFrame({"original": source})
-    opt_df["display"] = opt_df["original"].apply(
-        lambda x: safe_display_string(x, numeric_no_decimal=numeric_no_decimal)
-    )
+    opt_df["display"] = opt_df["original"].apply(lambda x: safe_display_string(x, numeric_no_decimal=numeric_no_decimal))
     opt_df = opt_df.drop_duplicates(subset=["display"], keep="first")
 
     if numeric_no_decimal:
-        opt_df["sort_key"] = opt_df["original"].apply(
-            lambda x: parse_number(x) if parse_number(x) is not None else 10**18
-        )
+        opt_df["sort_key"] = opt_df["original"].apply(lambda x: parse_number(x) if parse_number(x) is not None else 10**18)
         opt_df = opt_df.sort_values(["sort_key", "display"], kind="stable")
     else:
         opt_df["sort_key"] = opt_df["display"].astype(str)
@@ -399,66 +361,37 @@ def create_safe_multiselect(df_in, column_name, label, numeric_no_decimal=False)
 
     display_options = opt_df["display"].tolist()
     selected_display = st.sidebar.multiselect(label, options=display_options, default=[])
-
     if not selected_display:
         return df_in
 
-    selected_original = opt_df.loc[
-        opt_df["display"].isin(selected_display), "original"
-    ].tolist()
+    selected_original = opt_df.loc[opt_df["display"].isin(selected_display), "original"].tolist()
     return df_in[df_in[column_name].isin(selected_original)]
 
 
 def build_export_table(df_in):
-    display_cols = [
-        "Impress Type",
-        "g/m2",
-        "Supplier",
-        "Current Price",
-        "Currency",
-        "P.Value (R$/KG)",
-        "P.Value (R$/M2)",
-        "Última Atualização de Preço",
-        "Payment Terms",
-        "Lot (ton)",
-    ]
+    display_cols = ["Impress Type", "g/m2", "Supplier", "Current Price", "Currency", "P.Value (R$/KG)", "P.Value (R$/M2)", "Última Atualização de Preço", "Payment Terms", "Lot (ton)"]
     display_cols = [c for c in display_cols if c in df_in.columns]
+    table_df = df_in[display_cols].copy().rename(columns={"Última Atualização de Preço": "Último Preço"})
 
-    table_df = df_in[display_cols].copy()
-    table_df = table_df.rename(columns={"Última Atualização de Preço": "Último Preço"})
-
-    value_cols = ["Current Price", "P.Value (R$/KG)", "P.Value (R$/M2)"]
-    no_decimal_cols = ["g/m2", "Lot (ton)", "Working days"]
-
-    for col in value_cols:
+    for col in ["Current Price", "P.Value (R$/KG)", "P.Value (R$/M2)"]:
         if col in table_df.columns:
             table_df[col] = table_df[col].apply(lambda x: format_br_number(x, 2))
-
-    for col in no_decimal_cols:
+    for col in ["g/m2", "Lot (ton)", "Working days"]:
         if col in table_df.columns:
             table_df[col] = table_df[col].apply(lambda x: "" if pd.isna(x) else format_no_decimal(x))
-
     if "Último Preço" in table_df.columns:
         table_df["Último Preço"] = pd.to_datetime(table_df["Último Preço"], errors="coerce").dt.strftime("%d/%m/%Y")
-
     return table_df
 
 
-# =========================================================
-# LOAD
-# =========================================================
 @st.cache_data(show_spinner=False)
 def load_data():
     raw = pd.read_excel(EXCEL_FILE, sheet_name=SOURCE_SHEET, header=None)
     header_row = detect_header_row(raw)
     if header_row is None:
-        raise ValueError(
-            "Não foi possível identificar automaticamente a linha de cabeçalho da aba 'Preços e Condições'."
-        )
-
+        raise ValueError("Não foi possível identificar automaticamente a linha de cabeçalho da aba 'Preços e Condições'.")
     df = pd.read_excel(EXCEL_FILE, sheet_name=SOURCE_SHEET, header=header_row)
-    df.columns = [str(c).strip().replace("\n", " ") for c in df.columns]
-    df.columns = [re.sub(r"\s+", " ", c) for c in df.columns]
+    df.columns = [re.sub(r"\s+", " ", str(c).strip().replace("\n", " ")) for c in df.columns]
     df = df.dropna(how="all")
     return build_canonical_dataframe(df)
 
@@ -483,20 +416,16 @@ if df.empty:
 
 excel_last_update = get_excel_last_update(EXCEL_FILE)
 
-
-# =========================================================
-# SIDEBAR
-# =========================================================
 with st.sidebar:
     st.markdown("### Assistente de Análise")
     st.caption(APP_VERSION)
     st.divider()
 
 filtered = df.copy()
-filtered = create_safe_multiselect(filtered, "Impress Type", "Impress Type", numeric_no_decimal=False)
+filtered = create_safe_multiselect(filtered, "Impress Type", "Impress Type")
 filtered = create_safe_multiselect(filtered, "g/m2", "g/m2", numeric_no_decimal=True)
-filtered = create_safe_multiselect(filtered, "Supplier", "Supplier", numeric_no_decimal=False)
-filtered = create_safe_multiselect(filtered, "Currency", "Currency", numeric_no_decimal=False)
+filtered = create_safe_multiselect(filtered, "Supplier", "Supplier")
+filtered = create_safe_multiselect(filtered, "Currency", "Currency")
 filtered = create_safe_multiselect(filtered, "Lot (ton)", "Lot (ton)", numeric_no_decimal=True)
 
 with st.sidebar:
@@ -505,137 +434,62 @@ with st.sidebar:
         f"""
         <div style='font-size:0.92rem;color:#111827;'><b>Cockpit_Papel.xlsm</b></div>
         <div style='font-size:0.88rem;color:#4B5563;'>Última atualização: {excel_last_update}</div>
-        <div style='font-size:0.80rem;color:#6B7280;'>Camada analítica sem Material Number e sem Width (mm)</div>
+        <div style='font-size:0.80rem;color:#6B7280;'>Obsoletos são removidos mantendo o preço mais recente</div>
         """,
         unsafe_allow_html=True,
     )
 
-
-# =========================================================
-# BLOQUEIO SEM FILTRO
-# =========================================================
 if filtered.shape[0] == df.shape[0]:
     st.info("Selecione pelo menos um filtro para visualizar os dados.")
     st.stop()
 
-
-# =========================================================
-# LINHA 1 DE KPIs
-# =========================================================
-col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns(5)
-with col_f1:
-    kpi_card("Frete CN", format_br_number(premissas_kpis["Frete CN"], 2) if premissas_kpis["Frete CN"] is not None else "N/A")
-with col_f2:
-    kpi_card("Frete EU", format_br_number(premissas_kpis["Frete EU"], 2) if premissas_kpis["Frete EU"] is not None else "N/A")
-with col_f3:
-    kpi_card("USD/BRL", format_br_number(premissas_kpis["USD/BRL"], 2) if premissas_kpis["USD/BRL"] is not None else "N/A")
-with col_f4:
-    kpi_card("EUR/BRL", format_br_number(premissas_kpis["EUR/BRL"], 2) if premissas_kpis["EUR/BRL"] is not None else "N/A")
-with col_f5:
-    kpi_card("CNY/BRL", format_br_number(premissas_kpis["CNY/BRL"], 2) if premissas_kpis["CNY/BRL"] is not None else "N/A")
+c1, c2, c3, c4, c5 = st.columns(5)
+with c1: kpi_card("Frete CN", format_br_number(premissas_kpis["Frete CN"], 2) if premissas_kpis["Frete CN"] is not None else "N/A")
+with c2: kpi_card("Frete EU", format_br_number(premissas_kpis["Frete EU"], 2) if premissas_kpis["Frete EU"] is not None else "N/A")
+with c3: kpi_card("USD/BRL", format_br_number(premissas_kpis["USD/BRL"], 2) if premissas_kpis["USD/BRL"] is not None else "N/A")
+with c4: kpi_card("EUR/BRL", format_br_number(premissas_kpis["EUR/BRL"], 2) if premissas_kpis["EUR/BRL"] is not None else "N/A")
+with c5: kpi_card("CNY/BRL", format_br_number(premissas_kpis["CNY/BRL"], 2) if premissas_kpis["CNY/BRL"] is not None else "N/A")
 
 st.markdown("<div class='mlc-section-title'><h3>Tabela principal</h3></div>", unsafe_allow_html=True)
-
-# Depois da deduplicação, esta já é a visão limpa.
 table_df_display = build_export_table(filtered)
 st.dataframe(table_df_display, width="stretch", hide_index=True)
 
-exp1, exp2, _ = st.columns([1.2, 1.2, 6])
-with exp1:
-    csv_bytes = table_df_display.to_csv(index=False, sep=";", encoding="utf-8-sig").encode("utf-8-sig")
-    st.download_button(
-        label="Exportar CSV",
-        data=csv_bytes,
-        file_name="cockpit_filtrado.csv",
-        mime="text/csv",
-        width="stretch",
-    )
-with exp2:
-    excel_bytes = to_excel_bytes(table_df_display)
-    st.download_button(
-        label="Exportar Excel",
-        data=excel_bytes,
-        file_name="cockpit_filtrado.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        width="stretch",
-    )
+b1, b2, _ = st.columns([1.2, 1.2, 6])
+with b1:
+    st.download_button("Exportar CSV", table_df_display.to_csv(index=False, sep=';', encoding='utf-8-sig').encode('utf-8-sig'), "cockpit_filtrado.csv", "text/csv", width="stretch")
+with b2:
+    st.download_button("Exportar Excel", to_excel_bytes(table_df_display), "cockpit_filtrado.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", width="stretch")
 
 st.markdown("<div class='mlc-section-title'><h3>TCO médio por Supplier</h3></div>", unsafe_allow_html=True)
 if {"Supplier", "TCO (R$/KG)"}.issubset(filtered.columns):
     chart_df = filtered.copy()
     chart_df["TCO (R$/KG)"] = pd.to_numeric(chart_df["TCO (R$/KG)"], errors="coerce")
     chart_df = chart_df.dropna(subset=["Supplier", "TCO (R$/KG)"])
-
     if not chart_df.empty:
-        chart_base = (
-            chart_df.groupby("Supplier", as_index=False)["TCO (R$/KG)"]
-            .mean()
-            .sort_values("TCO (R$/KG)", ascending=True)
-        )
+        chart_base = chart_df.groupby("Supplier", as_index=False)["TCO (R$/KG)"].mean().sort_values("TCO (R$/KG)")
         chart_base["TCO_label"] = chart_base["TCO (R$/KG)"].apply(lambda x: format_br_number(x, 2))
-
-        fig_bar = px.bar(
-            chart_base,
-            x="Supplier",
-            y="TCO (R$/KG)",
-            color="TCO (R$/KG)",
-            color_continuous_scale="Blues",
-            text="TCO_label",
-        )
+        fig_bar = px.bar(chart_base, x="Supplier", y="TCO (R$/KG)", color="TCO (R$/KG)", color_continuous_scale="Blues", text="TCO_label")
         fig_bar.update_traces(textposition="outside")
-        fig_bar.update_layout(
-            showlegend=False,
-            height=420,
-            margin=dict(t=10, r=20, l=20, b=20),
-            xaxis_title="Supplier",
-            yaxis_title="TCO (R$/KG)",
-            plot_bgcolor="white",
-            paper_bgcolor="white",
-        )
+        fig_bar.update_layout(showlegend=False, height=420, margin=dict(t=10, r=20, l=20, b=20), xaxis_title="Supplier", yaxis_title="TCO (R$/KG)", plot_bgcolor="white", paper_bgcolor="white")
         fig_bar.update_xaxes(showgrid=False)
         fig_bar.update_yaxes(showgrid=True, gridcolor="#E5E7EB")
         st.plotly_chart(fig_bar, width="stretch")
-        st.caption("Fonte: aba 'Preços e Condições' do arquivo Cockpit_Papel.xlsm, após deduplicação analítica.")
-    else:
-        st.info("Sem dados válidos para exibir o gráfico.")
-else:
-    st.info("As colunas necessárias para o gráfico não estão disponíveis.")
+        st.caption("Fonte: aba 'Preços e Condições' do arquivo Cockpit_Papel.xlsm, após remoção de obsoletos.")
 
-
-# =========================================================
-# LINHA 2 DE KPIs
-# =========================================================
 best_pv_kg = safe_min(filtered["P.Value (R$/KG)"]) if "P.Value (R$/KG)" in filtered.columns else None
 best_pv_m2 = safe_min(filtered["P.Value (R$/M2)"]) if "P.Value (R$/M2)" in filtered.columns else None
 best_row = safe_best_row(filtered, "P.Value (R$/KG)") if "P.Value (R$/KG)" in filtered.columns else None
 best_supplier = best_row["Supplier"] if best_row is not None and "Supplier" in filtered.columns else "N/A"
-
-if "Impress Type" in filtered.columns:
-    unique_impress = filtered["Impress Type"].dropna().unique().tolist()
-    impress_value = str(unique_impress[0]) if len(unique_impress) == 1 else f"{len(unique_impress)} tipos"
-else:
-    impress_value = "N/A"
-
-record_count = len(filtered)
-latest_price_dt = None
-if "Última Atualização de Preço" in filtered.columns:
-    latest_price_dt = pd.to_datetime(filtered["Última Atualização de Preço"], errors="coerce").max()
+unique_impress = filtered["Impress Type"].dropna().unique().tolist() if "Impress Type" in filtered.columns else []
+impress_value = str(unique_impress[0]) if len(unique_impress) == 1 else (f"{len(unique_impress)} tipos" if unique_impress else "N/A")
+latest_price_dt = pd.to_datetime(filtered["Última Atualização de Preço"], errors="coerce").max() if "Última Atualização de Preço" in filtered.columns else None
 latest_price_str = latest_price_dt.strftime("%d/%m/%Y") if pd.notna(latest_price_dt) else "N/A"
 
 k1, k2, k3, k4, k5 = st.columns(5)
-with k1:
-    kpi_card("Impress Type", impress_value)
-with k2:
-    kpi_card("Melhor P.Value (R$/KG)", format_br_number(best_pv_kg, 2) if best_pv_kg is not None else "N/A")
-with k3:
-    kpi_card("Melhor P.Value (R$/M2)", format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A")
-with k4:
-    kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
-with k5:
-    kpi_card("Último preço considerado", latest_price_str)
+with k1: kpi_card("Impress Type", impress_value)
+with k2: kpi_card("Melhor P.Value (R$/KG)", format_br_number(best_pv_kg, 2) if best_pv_kg is not None else "N/A")
+with k3: kpi_card("Melhor P.Value (R$/M2)", format_br_number(best_pv_m2, 2) if best_pv_m2 is not None else "N/A")
+with k4: kpi_card("Melhor Supplier", best_supplier if best_supplier else "N/A")
+with k5: kpi_card("Último preço considerado", latest_price_str)
 
-st.caption(
-    f"Registros exibidos após limpeza analítica: {record_count}. "
-    "Nesta versão, o app remove Material Number e Width (mm) da camada analítica e, "
-    "em caso de duplicidade, mantém apenas o registro mais recente pela coluna 'Última Atualização de Preço'."
-)
+st.caption("Critério de remoção de obsolescência: se duas linhas têm a mesma visão exibida na tabela principal, o app mantém apenas a de data mais recente em 'Última Atualização de Preço'.")
