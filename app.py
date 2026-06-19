@@ -25,7 +25,7 @@ st.markdown(
         .block-container {padding-top: 1.0rem; padding-bottom: 1.2rem;}
         .mlc-kpi {border: 1px solid #E5E7EB; border-radius: 14px; padding: 14px 16px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.04); min-height: 86px;}
         .mlc-kpi-label {font-size: 0.84rem; color: #6B7280; margin-bottom: 6px;}
-        .mlc-kpi-value {font-size: 1.30rem; font-weight: 700; color: #111827; line-height: 1.2;}
+        .mlc-kpi-value {font-size: 1.00rem; font-weight: 700; color: #111827; line-height: 1.2;}
         .mlc-section-title {margin-top: 0.35rem; margin-bottom: 0.8rem;}
         .mlc-table-shell {border: 1px solid #E5E7EB; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.03);}
         .mlc-table-wrap {max-height: 560px; overflow-y: auto; overflow-x: auto;}
