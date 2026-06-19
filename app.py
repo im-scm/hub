@@ -16,7 +16,7 @@ EXCEL_FILE = "Cockpit_Papel.xlsm"
 SOURCE_SHEET = "Preços e Condições"
 PREMISSAS_SHEET = "Premissas"
 APP_TITLE = "Cockpit Papel"
-APP_VERSION = "V2.3"
+APP_VERSION = "v2.3"
 TABLE_HEIGHT_PX = 560
 
 st.markdown(
@@ -43,7 +43,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title(APP_TITLE)
+st.markdown(
+    f\"\"\"
+    <h1 style='font-size: 1.9rem; margin-bottom: 0.2rem; color: #111827;'>
+        {APP_TITLE}
+    </h1>
+    \"\"\",
+    unsafe_allow_html=True,
+)
 
 def normalize_text(value):
     if value is None or pd.isna(value):
