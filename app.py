@@ -19,21 +19,28 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def go_to_page(page_path):
+    try:
+        st.switch_page(page_path)
+    except Exception as e:
+        st.error("Não consegui abrir a página automaticamente.")
+        st.code(str(e))
+        st.info("Confira se o arquivo existe exatamente neste caminho: " + page_path)
+
 with st.sidebar:
     if os.path.exists(LOGO_PATH):
         st.image(LOGO_PATH, width=145)
 
     st.markdown("### SCM Analytics Hub")
-    st.caption("Use os botões abaixo para navegar.")
+    st.caption("Navegação")
     st.divider()
 
-    # Links reais para as páginas. Os caminhos precisam bater exatamente com a pasta pages/.
-    try:
-        st.page_link("app.py", label="Início", icon="🏠")
-        st.page_link("pages/01_Cockpit_Papel.py", label="Cockpit Papel", icon="📊")
-        st.page_link("pages/02_Paper_Base.py", label="Paper Base", icon="📦")
-    except Exception:
-        st.info("Se os links não aparecerem, confira se a pasta 'pages' existe na raiz do repositório.")
+    if st.button("🏠 Início", width="stretch"):
+        st.rerun()
+    if st.button("📊 Cockpit Papel", width="stretch"):
+        go_to_page("pages/01_Cockpit_Papel.py")
+    if st.button("📦 Paper Base", width="stretch"):
+        go_to_page("pages/02_Paper_Base.py")
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.caption("Arquivos esperados na raiz: Cockpit_Papel.xlsm e app_paperbase.xlsx")
@@ -50,7 +57,8 @@ with col1:
       <span class='hub-tag'>Preço</span><span class='hub-tag'>P.Value</span><span class='hub-tag'>Fornecedores</span><span class='hub-tag'>Auditoria</span>
     </div>
     """, unsafe_allow_html=True)
-    st.page_link("pages/01_Cockpit_Papel.py", label="Abrir Cockpit Papel", icon="📊")
+    if st.button("📊 Abrir Cockpit Papel", width="stretch"):
+        go_to_page("pages/01_Cockpit_Papel.py")
 
 with col2:
     st.markdown("""
@@ -60,9 +68,10 @@ with col2:
       <span class='hub-tag'>Volume mensal</span><span class='hub-tag'>EUR/kg</span><span class='hub-tag'>YTD</span><span class='hub-tag'>Supplier ranking</span>
     </div>
     """, unsafe_allow_html=True)
-    st.page_link("pages/02_Paper_Base.py", label="Abrir Paper Base", icon="📦")
+    if st.button("📦 Abrir Paper Base", width="stretch"):
+        go_to_page("pages/02_Paper_Base.py")
 
 st.markdown(
-    "<div class='hub-note'>Importante: estes botões só funcionam se os arquivos estiverem exatamente em <b>pages/01_Cockpit_Papel.py</b> e <b>pages/02_Paper_Base.py</b>.</div>",
+    "<div class='hub-note'>Esta versão evita st.page_link, que estava gerando KeyError: url_pathname no Streamlit Cloud. A navegação usa st.switch_page acionado por botões.</div>",
     unsafe_allow_html=True,
 )
