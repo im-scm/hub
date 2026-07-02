@@ -1,0 +1,9 @@
+
+# =========================================================
+# LOGO ACIMA DO MENU NATIVO
+# Cole após os imports e constantes principais do 01_Cockpit_Papel.py.
+# =========================================================
+import os
+LOGO_PATH = "assets/impress_logo.png"
+if os.path.exists(LOGO_PATH):
+    st.logo(LOGO_PATH, size="large")
