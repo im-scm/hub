@@ -409,15 +409,14 @@ with k5:
 st.write("")
 st.markdown("##### Monthly Imports | Base Paper")
 st.plotly_chart(build_monthly_chart(monthly_summary(filtered)), width="stretch")
-st.markdown("<div class='pb-note'>Barras: toneladas, com label na base da coluna. Linha: Price Avg com fundo nos labels para melhorar a leitura.</div>", unsafe_allow_html=True)
 
 st.markdown("##### Ranking por fornecedor")
 c1, c2 = st.columns(2)
 with c1:
-    st.markdown(f"#### Último mês: {latest.strftime('%m/%Y')}")
+    st.markdown(f"####### Último mês: {latest.strftime('%m/%Y')}")
     st.markdown(build_html_table(format_supplier_summary(supplier_summary(last_df)), TABLE_HEIGHT_PX, no_scroll=True), unsafe_allow_html=True)
 with c2:
-    st.markdown(f"#### YTD: {ytd_year}")
+    st.markdown(f"####### YTD: {ytd_year}")
     st.markdown(build_html_table(format_supplier_summary(supplier_summary(ytd_df)), TABLE_HEIGHT_PX, no_scroll=True), unsafe_allow_html=True)
 
 with st.expander("Ver base tratada / exportar"):
