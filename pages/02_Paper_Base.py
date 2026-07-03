@@ -355,7 +355,8 @@ except Exception as e:
     st.code(str(e))
     st.stop()
 
-st.markdown("<div class='pb-page-title'>{APP_TITLE}</div>", unsafe_allow_html=True)
+st.markdown("")
+st.markdown(f"<div class='pb-page-title'>{APP_TITLE}</div>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.markdown("### Filtros")
