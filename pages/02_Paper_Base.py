@@ -43,19 +43,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-excel_last_update = get_excel_last_update(EXCEL_FILE)
-
-with st.sidebar:
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div style='font-size:0.92rem;color:#111827;'><b>app_paperbase.xlsx</b></div>
-        <div style='font-size:0.88rem;color:#4B5563;'>Última atualização: {excel_last_update}</div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.caption(APP_VERSION)
-
 def get_excel_last_update(file_path):
     try:
         wb = load_workbook(file_path, read_only=True, keep_vba=True)
@@ -371,6 +358,19 @@ except Exception as e:
 
 st.markdown(f"<div class='pb-page-title'>{APP_TITLE}</div>", unsafe_allow_html=True)
 st.markdown("<div class='pb-subtitle'>Fornecimento mensal, ranking por fornecedor e custo médio ponderado em EUR/kg.</div>", unsafe_allow_html=True)
+
+excel_last_update = get_excel_last_update(EXCEL_FILE)
+
+with st.sidebar:
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div style='font-size:0.92rem;color:#111827;'><b>app_paperbase.xlsx</b></div>
+        <div style='font-size:0.88rem;color:#4B5563;'>Última atualização: {excel_last_update}</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.caption(APP_VERSION)
 
 with st.sidebar:
     st.markdown("### Filtros")
