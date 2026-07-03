@@ -54,6 +54,23 @@ with st.sidebar:
     )
     st.caption("v1.0")
 
+def get_excel_last_update(file_path):
+    try:
+        wb = load_workbook(file_path, read_only=True, keep_vba=True)
+        modified = wb.properties.modified
+        if modified is not None:
+            if hasattr(modified, "tzinfo") and modified.tzinfo is not None:
+                modified = modified.replace(tzinfo=None)
+            return modified.strftime("%d/%m/%Y")
+    except Exception:
+        pass
+    try:
+        ts = os.path.getmtime(file_path)
+        dt = datetime.fromtimestamp(ts)
+        return dt.strftime("%d/%m/%Y")
+    except Exception:
+        return "N/A"
+        
 def parse_number(value):
     if pd.isna(value):
         return None
