@@ -1,4 +1,3 @@
-
 import os
 import re
 from datetime import datetime
@@ -322,7 +321,7 @@ def build_monthly_chart(monthly_df):
             )
 
     fig.update_layout(
-        title=dict(text="Monthly Imports | Base Paper", x=.5, xanchor="center", font=dict(size=16, color="#111827")),
+        title=dict(text="Monthly-Imports | Base Paper", x=.5, xanchor="center", font=dict(size=16, color="#111827")),
         height=430,
         barmode="group",
         margin=dict(t=60, r=58, l=54, b=48),
