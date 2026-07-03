@@ -64,6 +64,10 @@ APP_TITLE = "Cockpit Papel"
 APP_VERSION = "v2.3"
 TABLE_HEIGHT_PX = 560
 
+# Logo nativa: posicionada acima do menu multipágina do Streamlit.
+if os.path.exists(LOGO_PATH):
+    st.logo(LOGO_PATH, size="large")
+
 st.markdown(
     """
     <style>
