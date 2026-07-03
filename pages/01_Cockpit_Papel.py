@@ -13,7 +13,7 @@ import plotly.express as px
 import streamlit as st
 from openpyxl import load_workbook
 
-st.set_page_config(page_title="Cockpit-Papel", layout="wide")
+st.set_page_config(page_title="Cockpit Papel", layout="wide")
 
 EXCEL_FILE = "Cockpit_Papel.xlsm"
 SOURCE_SHEET = "Preços e Condições"
@@ -437,8 +437,7 @@ if df.empty:
 excel_last_update = get_excel_last_update(EXCEL_FILE)
 
 with st.sidebar:
-    st.markdown("### Assistente de Análise")
-    st.divider()
+    st.markdown("### Filtros")
 filtered = df.copy()
 filtered = create_safe_multiselect(filtered, "Impress Type", "Impress Type")
 filtered = create_safe_multiselect(filtered, "g/m2", "g/m2", numeric_no_decimal=True)
