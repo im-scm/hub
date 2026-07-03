@@ -13,7 +13,7 @@ import plotly.express as px
 import streamlit as st
 from openpyxl import load_workbook
 
-st.set_page_config(page_title="Cockpit Papel", layout="wide")
+st.set_page_config(page_title="Cockpit-Papel", layout="wide")
 
 EXCEL_FILE = "Cockpit_Papel.xlsm"
 SOURCE_SHEET = "Preços e Condições"
