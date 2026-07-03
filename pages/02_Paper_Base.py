@@ -237,57 +237,102 @@ def build_monthly_chart(monthly_df):
     years = sorted(monthly_df["Year"].unique().tolist()) if not monthly_df.empty else []
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    palette = ["#ED7D31", "#70AD47", "#5B9BD5", "#A5A5A5"]
+
+    # Barras: mantemos tons fortes e parecidos com o Excel.
+    bar_palette = ["#ED7D31", "#70AD47", "#A5A5A5", "#FFC000"]
+
+    # Linhas de preço: cores mais contrastantes para melhorar leitura sobre as barras.
+    line_palette = ["#5B9BD5", "#ED7D31", "#70AD47", "#7F7F7F"]
 
     for idx, year in enumerate(years):
         ydf = monthly_df[monthly_df["Year"] == year].set_index("Month")
         qty = [ydf.loc[m, "Quantity ton"] if m in ydf.index else 0 for m in months]
         avg = [ydf.loc[m, "EUR/kg"] if m in ydf.index else None for m in months]
-        color = palette[idx % len(palette)]
 
+        bar_color = bar_palette[idx % len(bar_palette)]
+        line_color = line_palette[idx % len(line_palette)]
+
+        # Quantidade: label dentro da barra, ancorado na base.
+        # Isso deixa o topo da coluna livre para a linha/labels de Price Avg.
         fig.add_trace(
             go.Bar(
                 x=x,
                 y=qty,
                 name=f"{year} ton",
-                marker_color=color,
+                marker_color=bar_color,
+                marker_line=dict(color="rgba(255,255,255,0.85)", width=0.5),
                 text=[format_no_decimal(v) if v else "" for v in qty],
                 textposition="inside",
+                insidetextanchor="start",
+                textfont=dict(size=11, color="#1F2937"),
+                hovertemplate="Mês: %{x}<br>Quantidade: %{y:.0f} ton<extra></extra>",
             ),
             secondary_y=False,
         )
 
-        # Mantém os labels/anotações de preço médio, inclusive para 2026.
+        # Price Avg: linha sem texto nativo. Os labels serão annotations com fundo.
         fig.add_trace(
             go.Scatter(
                 x=x,
                 y=avg,
                 name=f"Price Avg {year}",
-                mode="lines+markers+text",
-                line=dict(color=color, width=2, dash="dot"),
-                marker=dict(size=7),
-                text=[format_br_number(v, 2) if v is not None and not pd.isna(v) else "" for v in avg],
-                textposition="top center",
-                textfont=dict(size=11),
+                mode="lines+markers",
+                line=dict(color=line_color, width=2.4, dash="dot"),
+                marker=dict(size=7, color=line_color, line=dict(color="white", width=1.2)),
                 hovertemplate="Mês: %{x}<br>Price Avg: %{y:.2f} EUR/kg<extra></extra>",
+                connectgaps=False,
             ),
             secondary_y=True,
         )
 
+        # Labels com fundo branco/translúcido e borda sutil.
+        # Isso melhora muito a leitura quando o texto cruza barras ou gridlines.
+        for month_label, price in zip(x, avg):
+            if price is None or pd.isna(price):
+                continue
+            fig.add_annotation(
+                x=month_label,
+                y=price,
+                xref="x",
+                yref="y2",
+                text=format_br_number(price, 2),
+                showarrow=False,
+                yshift=16,
+                font=dict(size=11, color=line_color),
+                bgcolor="rgba(255,255,255,0.88)",
+                bordercolor="rgba(107,114,128,0.28)",
+                borderwidth=1,
+                borderpad=2,
+            )
+
     fig.update_layout(
-        title=dict(text="Monthly Imports | Base Paper", x=.5, xanchor="center"),
+        title=dict(text="Monthly Imports | Base Paper", x=.5, xanchor="center", font=dict(size=16, color="#111827")),
         height=430,
         barmode="group",
-        margin=dict(t=60, r=50, l=50, b=40),
+        margin=dict(t=60, r=58, l=54, b=48),
         plot_bgcolor="white",
         paper_bgcolor="white",
-        legend=dict(orientation="h", y=-.14, x=.5, xanchor="center"),
+        legend=dict(orientation="h", y=-.16, x=.5, xanchor="center"),
+        bargap=0.32,
+        bargroupgap=0.08,
     )
-    fig.update_yaxes(title_text="Toneladas", secondary_y=False, showgrid=True, gridcolor="#E5E7EB")
-    fig.update_yaxes(title_text="EUR/kg", secondary_y=True, tickformat=".2f")
+
+    fig.update_yaxes(
+        title_text="Toneladas",
+        secondary_y=False,
+        showgrid=True,
+        gridcolor="#E5E7EB",
+        zeroline=True,
+        zerolinecolor="#D1D5DB",
+    )
+    fig.update_yaxes(
+        title_text="EUR/kg",
+        secondary_y=True,
+        tickformat=".2f",
+        showgrid=False,
+    )
     fig.update_xaxes(showgrid=False)
     return fig
-
 try:
     df = load_data()
 except Exception as e:
@@ -351,7 +396,7 @@ with k5:
 
 st.markdown("### Monthly Imports | Base Paper")
 st.plotly_chart(build_monthly_chart(monthly_summary(filtered)), width="stretch")
-st.markdown("<div class='pb-note'>Barras: toneladas. Linha/labels de preço médio exibidos apenas para anos diferentes de 2026.</div>", unsafe_allow_html=True)
+st.markdown("<div class='pb-note'>Barras: toneladas, com label na base da coluna. Linha: Price Avg com fundo nos labels para melhorar a leitura.</div>", unsafe_allow_html=True)
 
 st.markdown("### Ranking por fornecedor")
 c1, c2 = st.columns(2)
