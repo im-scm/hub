@@ -7,6 +7,45 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.markdown("""
+<style>
+
+/* Home */
+[data-testid="stSidebarNav"] ul li:nth-child(1) a {
+    font-size: 0;
+}
+
+[data-testid="stSidebarNav"] ul li:nth-child(1) a::after {
+    content: "🏠 Inicio";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Cockpit Papel */
+[data-testid="stSidebarNav"] ul li:nth-child(2) a {
+    font-size: 0;
+}
+
+[data-testid="stSidebarNav"] ul li:nth-child(2) a::after {
+    content: "🔎 Cockpit Papel";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Paper Base */
+[data-testid="stSidebarNav"] ul li:nth-child(3) a {
+    font-size: 0;
+}
+
+[data-testid="stSidebarNav"] ul li:nth-child(3) a::after {
+    content: "📈 Paper Base";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 LOGO_PATH = "assets/impress_logo.png"
 
 # Logo na sidebar, se existir
