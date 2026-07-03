@@ -410,6 +410,7 @@ st.write("")
 st.markdown("##### Monthly Imports | Base Paper")
 st.plotly_chart(build_monthly_chart(monthly_summary(filtered)), width="stretch")
 
+st.divider()
 st.markdown("##### Ranking por fornecedor")
 c1, c2 = st.columns(2)
 with c1:
@@ -431,8 +432,6 @@ with st.expander("Ver base tratada / exportar"):
         st.download_button("Exportar CSV", detail.to_csv(index=False, sep=";", encoding="utf-8-sig").encode("utf-8-sig"), "paperbase_filtrado.csv", "text/csv", width="stretch")
     with e2:
         st.download_button("Exportar Excel", to_excel_bytes(detail), "paperbase_filtrado.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", width="stretch")
-
-st.caption("Regra: Price Avg = soma de Value EUR dividida pela soma de Quantity KG no período selecionado.")
 
 excel_last_update = get_excel_last_update(EXCEL_FILE)
 
