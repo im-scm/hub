@@ -13,7 +13,7 @@ import streamlit as st
 EXCEL_FILE = "app_paperbase.xlsx"
 SOURCE_SHEET = "PAPER BASE"
 APP_TITLE = "Paper Base Dashboard"
-APP_VERSION = "V1.1 | Paper Base"
+APP_VERSION = "V1.2 | Paper Base"
 TABLE_HEIGHT_PX = 900
 LOGO_PATH = "assets/impress_logo.png"
 
@@ -21,24 +21,27 @@ LOGO_PATH = "assets/impress_logo.png"
 if os.path.exists(LOGO_PATH):
     st.logo(LOGO_PATH, size="large")
 
-st.markdown("""
-<style>
-.block-container {padding-top:1.1rem; padding-bottom:1.2rem;}
-.pb-page-title {font-size:1.75rem; font-weight:700; color:#111827; margin:0 0 .15rem 0;}
-.pb-subtitle {font-size:.92rem; color:#6B7280; margin-bottom:1rem;}
-.pb-kpi {border:1px solid #E5E7EB; border-radius:14px; padding:14px 16px; background:#FFF; box-shadow:0 1px 2px rgba(0,0,0,.04); min-height:82px;}
-.pb-kpi-label {font-size:.78rem; color:#6B7280; margin-bottom:6px;}
-.pb-kpi-value {font-size:1.16rem; font-weight:700; color:#111827; line-height:1.2;}
-.pb-table-shell {border:1px solid #E5E7EB; border-radius:14px; background:#FFF; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.03);}
-.pb-table-wrap {overflow-y:auto; overflow-x:auto;}
-.pb-table-wrap.no-scroll {overflow-y:visible; overflow-x:auto; max-height:none !important;}
-.pb-table {width:100%; border-collapse:separate; border-spacing:0; table-layout:auto; font-size:.84rem; color:#111827;}
-.pb-table thead th {position:sticky; top:0; z-index:2; background:#F9FAFB; color:#6B7280; font-weight:600; border-bottom:1px solid #E5E7EB; border-right:1px solid #F0F2F5; padding:8px 10px; white-space:nowrap;}
-.pb-table tbody td {padding:7px 10px; border-bottom:1px solid #F3F4F6; border-right:1px solid #F8FAFC; white-space:nowrap; background:#FFF;}
-.pb-table tbody tr:hover td {background:#FAFBFF;}
-.pb-left{text-align:left}.pb-center{text-align:center}.pb-right{text-align:right;font-variant-numeric:tabular-nums}.pb-note{color:#6B7280;font-size:.78rem;margin-top:.35rem;}
-</style>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <style>
+        .block-container {padding-top: 1.1rem; padding-bottom: 1.2rem;}
+        .pb-page-title {font-size:1.75rem; font-weight:700; color:#111827; margin:0 0 .15rem 0;}
+        .pb-subtitle {font-size:.92rem; color:#6B7280; margin-bottom:1rem;}
+        .pb-kpi {border:1px solid #E5E7EB; border-radius:14px; padding:14px 16px; background:#FFF; box-shadow:0 1px 2px rgba(0,0,0,.04); min-height:82px;}
+        .pb-kpi-label {font-size:.78rem; color:#6B7280; margin-bottom:6px;}
+        .pb-kpi-value {font-size:1.16rem; font-weight:700; color:#111827; line-height:1.2;}
+        .pb-table-shell {border:1px solid #E5E7EB; border-radius:14px; background:#FFF; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.03);}
+        .pb-table-wrap {overflow-y:auto; overflow-x:auto;}
+        .pb-table-wrap.no-scroll {overflow:visible;}
+        .pb-table {width:100%; border-collapse:separate; border-spacing:0; table-layout:auto; font-size:.84rem; color:#111827;}
+        .pb-table thead th {position:sticky; top:0; z-index:2; background:#F9FAFB; color:#6B7280; font-weight:600; border-bottom:1px solid #E5E7EB; border-right:1px solid #F0F2F5; padding:8px 10px; white-space:nowrap;}
+        .pb-table tbody td {padding:7px 10px; border-bottom:1px solid #F3F4F6; border-right:1px solid #F8FAFC; white-space:nowrap; background:#FFF;}
+        .pb-table tbody tr:hover td {background:#FAFBFF;}
+        .pb-left{text-align:left}.pb-center{text-align:center}.pb-right{text-align:right;font-variant-numeric:tabular-nums}.pb-note{color:#6B7280;font-size:.78rem;margin-top:.35rem;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 def parse_number(value):
@@ -109,7 +112,12 @@ def parse_excel_month(value):
 
 def kpi_card(label, value):
     st.markdown(
-        f"<div class='pb-kpi'><div class='pb-kpi-label'>{escape(str(label))}</div><div class='pb-kpi-value'>{escape(str(value))}</div></div>",
+        f"""
+        <div class='pb-kpi'>
+            <div class='pb-kpi-label'>{escape(str(label))}</div>
+            <div class='pb-kpi-value'>{escape(str(value))}</div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 
@@ -126,8 +134,9 @@ def build_html_table(df_html, height_px=430, no_scroll=False):
     if df_html.empty:
         return "<div class='pb-note'>Sem registros para exibir.</div>"
 
-    right_cols = {"Quantity KG", "Value EUR", "Average price", "Share %", "Rank", "EUR/kg"}
+    right_cols = {"Quantity KG", "Value EUR", "Average price", "Share %", "EUR/kg"}
     left_cols = {"Supplier", "Mat Description", "Material Group"}
+
     wrap_class = "pb-table-wrap no-scroll" if no_scroll else "pb-table-wrap"
     max_height = "" if no_scroll else f" style='max-height:{int(height_px)}px;'"
 
@@ -183,8 +192,10 @@ def load_data():
 
 
 def supplier_summary(df_in):
+    """Ranking por fornecedor, sem coluna Rank e com ordem profissional de colunas."""
+    ordered_cols = ["Supplier", "Quantity KG", "Value EUR", "Average price", "Share %"]
     if df_in.empty:
-        return pd.DataFrame(columns=["Rank", "Supplier", "Quantity KG", "Average price", "Share %", "Value EUR"])
+        return pd.DataFrame(columns=ordered_cols)
 
     base = df_in.groupby("Supplier", as_index=False).agg(
         **{"Quantity KG": ("Quantity KG", "sum"), "Value EUR": ("Value EUR", "sum")}
@@ -193,20 +204,19 @@ def supplier_summary(df_in):
     total_kg = base["Quantity KG"].sum()
     base["Share %"] = (base["Quantity KG"] / total_kg * 100) if total_kg else 0
     base = base.sort_values("Quantity KG", ascending=False, kind="stable").reset_index(drop=True)
-    base.insert(0, "Rank", range(1, len(base) + 1))
-    return base[["Rank", "Supplier", "Quantity KG", "Average price", "Share %", "Value EUR"]]
+    return base[ordered_cols]
 
 
 def format_supplier_summary(df_in):
     df = df_in.copy()
     if "Quantity KG" in df.columns:
         df["Quantity KG"] = df["Quantity KG"].apply(format_no_decimal)
+    if "Value EUR" in df.columns:
+        df["Value EUR"] = df["Value EUR"].apply(lambda x: format_br_number(x, 0))
     if "Average price" in df.columns:
         df["Average price"] = df["Average price"].apply(lambda x: format_br_number(x, 2))
     if "Share %" in df.columns:
         df["Share %"] = df["Share %"].apply(lambda x: format_br_number(x, 1))
-    if "Value EUR" in df.columns:
-        df["Value EUR"] = df["Value EUR"].apply(lambda x: format_br_number(x, 0))
     return df
 
 
@@ -249,33 +259,35 @@ def build_monthly_chart(monthly_df):
             secondary_y=False,
         )
 
-        fig.add_trace(
-            go.Scatter(
-                x=x_labels,
-                y=avg,
-                name=f"avg {year}",
-                mode="lines+markers",
-                line=dict(color=color, width=2, dash="dot"),
-            ),
-            secondary_y=True,
-        )
+        # Ajuste solicitado: remover do gráfico a linha de avg 2026.
+        if int(year) != 2026:
+            fig.add_trace(
+                go.Scatter(
+                    x=x_labels,
+                    y=avg,
+                    name=f"avg {year}",
+                    mode="lines+markers",
+                    line=dict(color=color, width=2, dash="dot"),
+                ),
+                secondary_y=True,
+            )
 
-        # Average price na base da coluna: annotations fixas na base do gráfico.
-        for m, label, avg_value in zip(months, x_labels, avg):
-            if avg_value is not None and not pd.isna(avg_value):
-                fig.add_annotation(
-                    x=label,
-                    y=0.02 + (idx * 0.045),
-                    xref="x",
-                    yref="paper",
-                    text=format_br_number(avg_value, 2),
-                    showarrow=False,
-                    font=dict(size=10, color=color),
-                    bgcolor="rgba(255,255,255,0.75)",
-                    bordercolor=color,
-                    borderwidth=1,
-                    borderpad=2,
-                )
+            # Average price na base apenas para anos diferentes de 2026.
+            for label, avg_value in zip(x_labels, avg):
+                if avg_value is not None and not pd.isna(avg_value):
+                    fig.add_annotation(
+                        x=label,
+                        y=0.02 + (idx * 0.045),
+                        xref="x",
+                        yref="paper",
+                        text=format_br_number(avg_value, 2),
+                        showarrow=False,
+                        font=dict(size=10, color=color),
+                        bgcolor="rgba(255,255,255,0.75)",
+                        bordercolor=color,
+                        borderwidth=1,
+                        borderpad=2,
+                    )
 
     fig.update_layout(
         title=dict(text="Monthly Imports | Base Paper", x=0.5, xanchor="center"),
@@ -355,7 +367,7 @@ with k5:
 
 st.markdown("### Monthly Imports | Base Paper")
 st.plotly_chart(build_monthly_chart(monthly_summary(filtered)), width="stretch")
-st.markdown("<div class='pb-note'>Barras: toneladas. Rótulos na base: custo médio ponderado em EUR/kg.</div>", unsafe_allow_html=True)
+st.markdown("<div class='pb-note'>Barras: toneladas. Linha/labels de preço médio exibidos apenas para anos diferentes de 2026.</div>", unsafe_allow_html=True)
 
 st.markdown("### Ranking por fornecedor")
 c1, c2 = st.columns(2)
