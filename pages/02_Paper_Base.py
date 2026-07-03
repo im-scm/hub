@@ -407,11 +407,11 @@ with k5:
     kpi_card("Materiais", format_no_decimal(filtered["Mat Description"].nunique()))
 
 st.write("")
-st.markdown("# Monthly Imports | Base Paper")
+st.markdown("##### Monthly Imports | Base Paper")
 st.plotly_chart(build_monthly_chart(monthly_summary(filtered)), width="stretch")
 st.markdown("<div class='pb-note'>Barras: toneladas, com label na base da coluna. Linha: Price Avg com fundo nos labels para melhorar a leitura.</div>", unsafe_allow_html=True)
 
-st.markdown("### Ranking por fornecedor")
+st.markdown("##### Ranking por fornecedor")
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"#### Último mês: {latest.strftime('%m/%Y')}")
