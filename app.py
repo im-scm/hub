@@ -66,4 +66,8 @@ def run_dashboard(page_file: str):
             found = sorted(str(p) for p in Path('.').glob('**/*.py'))
             st.code("\n".join(found) if found else "Nenhum arquivo .py encontrado.")
         st.stop()
-    runpy.run_path(str(path), run_name="__main__")
+        
+    try:
+        runpy.run_path(str(path), run_name="__main__")
+    except Exception as e:
+        st.exception(e)
