@@ -370,8 +370,7 @@ with st.sidebar:
     month_map = {1:"jan",2:"fev",3:"mar",4:"abr",5:"mai",6:"jun",7:"jul",8:"ago",9:"set",10:"out",11:"nov",12:"dez"}
     month_options = sorted(df["Month"].unique().tolist())
     selected_month_labels = st.multiselect("Meses", [month_map[m] for m in month_options], default=[month_map[m] for m in month_options])
-    selected_months = [m for m, lbl in month_map.items() if lbl in selected_month_labels]
-    st.caption("Fonte: app_paperbase.xlsx | aba PAPER BASE")
+    selected_months = [m for m, lbl in month_map.items() if lbl in selected_month_labels]    
 
 filtered = df.copy()
 if selected_years:
