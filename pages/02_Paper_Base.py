@@ -43,6 +43,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+with st.sidebar:
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div style='font-size:0.92rem;color:#111827;'><b>app_paperbase.xlsx</b></div>
+        <div style='font-size:0.88rem;color:#4B5563;'>Última atualização: {excel_last_update}</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.caption("v1.0")
 
 def parse_number(value):
     if pd.isna(value):
