@@ -63,6 +63,7 @@ PREMISSAS_SHEET = "Premissas"
 APP_TITLE = "Cockpit Papel"
 APP_VERSION = "v2.3"
 TABLE_HEIGHT_PX = 560
+LOGO_PATH = "assets/impress_logo.png"
 
 # Logo nativa: posicionada acima do menu multipágina do Streamlit.
 if os.path.exists(LOGO_PATH):
