@@ -54,7 +54,7 @@ with st.sidebar:
         """,
         unsafe_allow_html=True,
     )
-    st.caption("v1.0")
+    st.caption(APP_VERSION)
 
 def get_excel_last_update(file_path):
     try:
