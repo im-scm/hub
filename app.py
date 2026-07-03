@@ -67,29 +67,3 @@ def run_dashboard(page_file: str):
             st.code("\n".join(found) if found else "Nenhum arquivo .py encontrado.")
         st.stop()
     runpy.run_path(str(path), run_name="__main__")
-
-
-with st.sidebar:
-    if os.path.exists(LOGO_PATH):
-        st.image(LOGO_PATH, width=145)
-
-    st.markdown("### SCM Analytics Hub")
-    st.caption("Navegação estável sem switch_page")
-    st.divider()
-
-    selected_page = st.radio(
-        "Selecione a visão",
-        options=["Início", "Cockpit Papel", "Paper Base"],
-        index=0,
-        label_visibility="collapsed",
-    )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.caption("Arquivos Excel na raiz:")
-    st.caption("Cockpit_Papel.xlsm")
-    st.caption("app_paperbase.xlsx")
-
-if selected_page == "Início":
-    render_home()
-else:
-    run_dashboard(PAGE_FILES[selected_page])
