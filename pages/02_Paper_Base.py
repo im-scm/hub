@@ -9,6 +9,50 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit as st
 
+st.set_page_config(page_title="Cockpit Papel", layout="wide")
+
+st.markdown("""
+<style>
+
+/* Esconde o texto original da navegação lateral */
+[data-testid="stSidebarNav"] ul li a span {
+    display: none !important;
+}
+
+/* Ajusta aparência dos links da sidebar */
+[data-testid="stSidebarNav"] ul li a {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 38px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+
+/* Inicio */
+[data-testid="stSidebarNav"] ul li:nth-child(1) a::after {
+    content: "🏠 Inicio";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Cockpit Papel */
+[data-testid="stSidebarNav"] ul li:nth-child(2) a::after {
+    content: "🔎 Cockpit Papel";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Paper Base */
+[data-testid="stSidebarNav"] ul li:nth-child(3) a::after {
+    content: "📈 Paper Base";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 EXCEL_FILE = "app_paperbase.xlsx"
 SOURCE_SHEET = "PAPER BASE"
 APP_TITLE = "Paper Base Dashboard"
