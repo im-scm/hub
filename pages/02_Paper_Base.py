@@ -134,7 +134,7 @@ def build_html_table(df_html, height_px=430, no_scroll=False):
     if df_html.empty:
         return "<div class='pb-note'>Sem registros para exibir.</div>"
 
-    right_cols = {"Quantity KG", "Value EUR", "Average price", "Share %", "EUR/kg"}
+    right_cols = {"Quantity KG", "Value EUR", "Price Avg", "Share %", "EUR/kg"}
     left_cols = {"Supplier", "Mat Description", "Material Group"}
 
     wrap_class = "pb-table-wrap no-scroll" if no_scroll else "pb-table-wrap"
@@ -193,14 +193,14 @@ def load_data():
 
 def supplier_summary(df_in):
     """Ranking por fornecedor, sem coluna Rank e com ordem profissional de colunas."""
-    ordered_cols = ["Supplier", "Quantity KG", "Value EUR", "Average price", "Share %"]
+    ordered_cols = ["Supplier", "Quantity KG", "Value EUR", "Price Avg", "Share %"]
     if df_in.empty:
         return pd.DataFrame(columns=ordered_cols)
 
     base = df_in.groupby("Supplier", as_index=False).agg(
         **{"Quantity KG": ("Quantity KG", "sum"), "Value EUR": ("Value EUR", "sum")}
     )
-    base["Average price"] = base["Value EUR"] / base["Quantity KG"]
+    base["Price Avg"] = base["Value EUR"] / base["Quantity KG"]
     total_kg = base["Quantity KG"].sum()
     base["Share %"] = (base["Quantity KG"] / total_kg * 100) if total_kg else 0
     base = base.sort_values("Quantity KG", ascending=False, kind="stable").reset_index(drop=True)
@@ -213,8 +213,8 @@ def format_supplier_summary(df_in):
         df["Quantity KG"] = df["Quantity KG"].apply(format_no_decimal)
     if "Value EUR" in df.columns:
         df["Value EUR"] = df["Value EUR"].apply(lambda x: format_br_number(x, 0))
-    if "Average price" in df.columns:
-        df["Average price"] = df["Average price"].apply(lambda x: format_br_number(x, 2))
+    if "Price Avg" in df.columns:
+        df["Price Avg"] = df["Price Avg"].apply(lambda x: format_br_number(x, 2))
     if "Share %" in df.columns:
         df["Share %"] = df["Share %"].apply(lambda x: format_br_number(x, 1))
     return df
@@ -230,11 +230,10 @@ def monthly_summary(df_in):
     base["Quantity ton"] = base["Quantity KG"] / 1000
     return base.sort_values(["Year", "Month"]).reset_index(drop=True)
 
-
 def build_monthly_chart(monthly_df):
-    month_names = {1:"jan",2:"fev",3:"mar",4:"abr",5:"mai",6:"jun",7:"jul",8:"ago",9:"set",10:"out",11:"nov",12:"dez"}
+    names = {1:"jan",2:"fev",3:"mar",4:"abr",5:"mai",6:"jun",7:"jul",8:"ago",9:"set",10:"out",11:"nov",12:"dez"}
     months = list(range(1, 13))
-    x_labels = [month_names[m] for m in months]
+    x = [names[m] for m in months]
     years = sorted(monthly_df["Year"].unique().tolist()) if not monthly_df.empty else []
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -248,61 +247,46 @@ def build_monthly_chart(monthly_df):
 
         fig.add_trace(
             go.Bar(
-                x=x_labels,
+                x=x,
                 y=qty,
                 name=f"{year} ton",
                 marker_color=color,
                 text=[format_no_decimal(v) if v else "" for v in qty],
-                textposition="outside",
-                cliponaxis=False,
+                textposition="inside",
             ),
             secondary_y=False,
         )
 
-        # Ajuste solicitado: remover do gráfico a linha de avg 2026.
-        if int(year) != 2026:
-            fig.add_trace(
-                go.Scatter(
-                    x=x_labels,
-                    y=avg,
-                    name=f"avg {year}",
-                    mode="lines+markers",
-                    line=dict(color=color, width=2, dash="dot"),
-                ),
-                secondary_y=True,
-            )
-
-            # Average price na base apenas para anos diferentes de 2026.
-            for label, avg_value in zip(x_labels, avg):
-                if avg_value is not None and not pd.isna(avg_value):
-                    fig.add_annotation(
-                        x=label,
-                        y=0.02 + (idx * 0.045),
-                        xref="x",
-                        yref="paper",
-                        text=format_br_number(avg_value, 2),
-                        showarrow=False,
-                        font=dict(size=10, color=color),
-                        bgcolor="rgba(255,255,255,0.75)",
-                        bordercolor=color,
-                        borderwidth=1,
-                        borderpad=2,
-                    )
+        # Mantém os labels/anotações de preço médio, inclusive para 2026.
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=avg,
+                name=f"Price Avg {year}",
+                mode="lines+markers+text",
+                line=dict(color=color, width=2, dash="dot"),
+                marker=dict(size=7),
+                text=[format_br_number(v, 2) if v is not None and not pd.isna(v) else "" for v in avg],
+                textposition="top center",
+                textfont=dict(size=11),
+                hovertemplate="Mês: %{x}<br>Price Avg: %{y:.2f} EUR/kg<extra></extra>",
+            ),
+            secondary_y=True,
+        )
 
     fig.update_layout(
-        title=dict(text="Monthly Imports | Base Paper", x=0.5, xanchor="center"),
-        height=460,
+        title=dict(text="Monthly Imports | Base Paper", x=.5, xanchor="center"),
+        height=430,
         barmode="group",
-        margin=dict(t=70, r=55, l=55, b=50),
+        margin=dict(t=60, r=50, l=50, b=40),
         plot_bgcolor="white",
         paper_bgcolor="white",
-        legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
+        legend=dict(orientation="h", y=-.14, x=.5, xanchor="center"),
     )
     fig.update_yaxes(title_text="Toneladas", secondary_y=False, showgrid=True, gridcolor="#E5E7EB")
     fig.update_yaxes(title_text="EUR/kg", secondary_y=True, tickformat=".2f")
     fig.update_xaxes(showgrid=False)
     return fig
-
 
 try:
     df = load_data()
@@ -391,4 +375,4 @@ with st.expander("Ver base tratada / exportar"):
     with e2:
         st.download_button("Exportar Excel", to_excel_bytes(detail), "paperbase_filtrado.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", width="stretch")
 
-st.caption("Regra: Average price = soma de Value EUR dividida pela soma de Quantity KG no período selecionado.")
+st.caption("Regra: Price Avg = soma de Value EUR dividida pela soma de Quantity KG no período selecionado.")
