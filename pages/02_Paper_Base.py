@@ -43,6 +43,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+excel_last_update = get_excel_last_update(EXCEL_FILE)
+
 with st.sidebar:
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown(
