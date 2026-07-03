@@ -361,8 +361,6 @@ st.markdown("<div class='pb-subtitle'>Fornecimento mensal, ranking por fornecedo
 
 with st.sidebar:
     st.markdown("### Filtros")
-    st.caption(APP_VERSION)
-    st.divider()
     years = sorted(df["Year"].unique().tolist())
     selected_years = st.multiselect("Ano", years, default=years)
     materials = sorted(df["Material Group"].dropna().unique().tolist())
