@@ -1,7 +1,7 @@
 
-# Página: Procurement Control Tower
+# Página: Procurement Dashboard
 # Salvar este arquivo dentro da pasta pages/ do SCM Analytics Hub.
-# Sugestão de nome: 03_Compras_Control_Tower.py
+# Sugestão de nome: 03_Dash_Compras.py
 
 import os
 import re
@@ -15,9 +15,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit as st
 
-st.set_page_config(page_title="Compras Control Tower", layout="wide")
+st.set_page_config(page_title="Procurement Dashboard", layout="wide")
 
-APP_TITLE = "Compras Control Tower"
+APP_TITLE = "Procurement Dashboard"
 APP_VERSION = "v2.0 | Procurement Analytics"
 LOGO_PATH = "assets/impress_logo.png"
 DATA_CANDIDATES = [
@@ -332,17 +332,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Links de referência para o hub. Ajuste os caminhos se os nomes finais forem diferentes.
 with st.sidebar:
-    st.markdown("### Navegação do Hub")
-    try:
-        st.page_link("app.py", label="Home", icon="🏠")
-        st.page_link("pages/01_Cockpit_Papel.py", label="Cockpit Papel", icon="🔎")
-        st.page_link("pages/02_Paper_Base.py", label="Paper Base", icon="📈")
-    except Exception:
-        st.markdown("- 🏠 Home")
-        st.markdown("- 🔎 Cockpit Papel")
-        st.markdown("- 📈 Paper Base")
     st.divider()
     st.markdown("### Base de dados")
 
@@ -446,7 +436,7 @@ with k8:
 
 st.write("")
 
-tab_control, tab_follow, tab_suppliers, tab_abc_sup, tab_abc_items, tab_buyers, tab_pmp, tab_price, tab_radar = st.tabs([
+tab_, tab_follow, tab_suppliers, tab_abc_sup, tab_abc_items, tab_buyers, tab_pmp, tab_price, tab_radar = st.tabs([
     "🏠 Control Tower",
     "📦 Follow-up",
     "🏭 Fornecedores",
