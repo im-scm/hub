@@ -60,7 +60,7 @@ st.markdown(
 
     /* Dashboard */
     [data-testid="stSidebarNav"] ul li:nth-child(4) a::after {
-        content: "🧭 Dashboard Compras";
+        content: "🧭 Procurement Dashboard";
         font-size: 14px;
         font-weight: 600;
     }
