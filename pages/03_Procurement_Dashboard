@@ -1,8 +1,3 @@
-
-# Página: Procurement Dashboard
-# Salvar este arquivo dentro da pasta pages/ do SCM Analytics Hub.
-# Sugestão de nome: 03_Dash_Compras.py
-
 import os
 import re
 from datetime import datetime
