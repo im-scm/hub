@@ -34,23 +34,53 @@ if os.path.exists(LOGO_PATH):
 # -----------------------------------------------------------------------------
 st.markdown(
     """
-    <style>
-    .block-container {padding-top: 1.15rem; padding-bottom: 2rem;}
-    .scm-title {font-size: 2.05rem; font-weight: 760; color:#111827; margin-bottom:.15rem;}
-    .scm-subtitle {font-size:.98rem; color:#6B7280; margin-bottom:1.15rem;}
-    .kpi-card {
-        border:1px solid #E5E7EB; border-radius:14px; padding:14px 16px;
-        background:linear-gradient(180deg,#FFFFFF 0%,#F9FAFB 100%);
-        box-shadow:0 1px 2px rgba(15,23,42,.06); min-height:92px;
-    }
-    .kpi-label {font-size:.77rem; text-transform:uppercase; color:#6B7280; letter-spacing:.04em; font-weight:700;}
-    .kpi-value {font-size:1.45rem; color:#111827; font-weight:780; margin-top:.35rem;}
-    .kpi-note {font-size:.77rem; color:#6B7280; margin-top:.25rem;}
-    .section-title {font-size:1.06rem; font-weight:760; color:#111827; margin: .35rem 0 .4rem;}
-    .small-muted {font-size:.82rem; color:#6B7280;}
-    div[data-testid="stMetricValue"] {font-size: 1.28rem;}
-    .dataframe th {font-size: 0.8rem;}
-    </style>
+<style>
+
+/* Esconde o texto original da navegação lateral */
+[data-testid="stSidebarNav"] ul li a span {
+    display: none !important;
+}
+
+/* Ajusta aparência dos links da sidebar */
+[data-testid="stSidebarNav"] ul li a {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 38px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+
+/* Inicio */
+[data-testid="stSidebarNav"] ul li:nth-child(1) a::after {
+    content: "🏠 Inicio";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Cockpit Papel */
+[data-testid="stSidebarNav"] ul li:nth-child(2) a::after {
+    content: "🔎 Cockpit Papel";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Paper Base */
+[data-testid="stSidebarNav"] ul li:nth-child(3) a::after {
+    content: "📈 Paper Base";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Procurement Dashboard */
+    [data-testid="stSidebarNav"] ul li:nth-child(4) a::after {
+        content: "🧭 Procurement Dashboard";
+        font-size: 14px;
+        font-weight: 600;
+}
+
+</style>    
+
     """,
     unsafe_allow_html=True,
 )
