@@ -58,6 +58,13 @@ st.markdown(
         font-weight: 600;
     }
 
+    /* Dashboard */
+    [data-testid="stSidebarNav"] ul li:nth-child(4) a::after {
+        content: "🧭 Dashboard Compras";
+        font-size: 14px;
+        font-weight: 600;
+    }
+
 
     /* =========================
        HOME PAGE
