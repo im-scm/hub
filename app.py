@@ -153,7 +153,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown(
@@ -185,6 +185,17 @@ with col2:
             <span class="tag">YTD</span>
             <span class="tag">Supplier ranking</span>
         </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with col3:
+    st.markdown(
+        """
+        🧭 Procurement Dashboard
+        Spend, follow-up, ABC de fornecedores, ABC de itens, PMP, compradores e inteligência de preços.
+
+        Spend PMP Follow-up ABC
         """,
         unsafe_allow_html=True
     )
