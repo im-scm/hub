@@ -17,23 +17,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Procurement Dashboard", layout="wide")
 
-APP_TITLE = "Procurement Dashboard"
-APP_VERSION = "v2.0 | Procurement Analytics"
-LOGO_PATH = "assets/impress_logo.png"
-DATA_CANDIDATES = [
-    "data/ksoft.xlsx",
-    "ksoft.xlsx",
-    "database/ksoft.xlsx",
-]
-
-if os.path.exists(LOGO_PATH):
-    st.logo(LOGO_PATH, size="large")
-
-# -----------------------------------------------------------------------------
-# CSS leve, alinhado ao hub atual
-# -----------------------------------------------------------------------------
-st.markdown(
-    """
 <style>
 
 /* Esconde o texto original da navegação lateral */
@@ -81,6 +64,40 @@ st.markdown(
 
 </style>    
 
+APP_TITLE = "Procurement Dashboard"
+APP_VERSION = "v2.0 | Procurement Analytics"
+LOGO_PATH = "assets/impress_logo.png"
+DATA_CANDIDATES = [
+    "data/ksoft.xlsx",
+    "ksoft.xlsx",
+    "database/ksoft.xlsx",
+]
+
+if os.path.exists(LOGO_PATH):
+    st.logo(LOGO_PATH, size="large")
+
+# -----------------------------------------------------------------------------
+# CSS leve, alinhado ao hub atual
+# -----------------------------------------------------------------------------
+st.markdown(
+    """
+    <style>
+    .block-container {padding-top: 1.0rem; padding-bottom: 1.2rem;}
+    .scm-title {font-size: 2.05rem; font-weight: 760; color:#111827; margin-bottom:.15rem;}
+    .scm-subtitle {font-size:.98rem; color:#6B7280; margin-bottom:1.15rem;}
+    .kpi-card {
+        border:1px solid #E5E7EB; border-radius:14px; padding:14px 16px;
+        background:linear-gradient(180deg,#FFFFFF 0%,#F9FAFB 100%);
+        box-shadow:0 1px 2px rgba(15,23,42,.06); min-height:92px;
+    }
+    .kpi-label {font-size:.77rem; text-transform:uppercase; color:#6B7280; letter-spacing:.04em; font-weight:700;}
+    .kpi-value {font-size:1.45rem; color:#111827; font-weight:780; margin-top:.35rem;}
+    .kpi-note {font-size:.77rem; color:#6B7280; margin-top:.25rem;}
+    .section-title {font-size:1.06rem; font-weight:760; color:#111827; margin: .35rem 0 .4rem;}
+    .small-muted {font-size:.82rem; color:#6B7280;}
+    div[data-testid="stMetricValue"] {font-size: 1.28rem;}
+    .dataframe th {font-size: 0.8rem;}
+    </style>
     """,
     unsafe_allow_html=True,
 )
