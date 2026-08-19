@@ -58,7 +58,7 @@ st.markdown(
         font-weight: 600;
     }
 
-    /* Dashboard */
+    /* Procurement Dashboard */
     [data-testid="stSidebarNav"] ul li:nth-child(4) a::after {
         content: "🧭 Procurement Dashboard";
         font-size: 14px;
